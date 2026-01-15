@@ -1,0 +1,64 @@
+# HELP.md
+# .gradle
+# build/
+# !gradle/wrapper/gradle-wrapper.jar
+# !**/src/main/**/build/
+# !**/src/test/**/build/
+
+# ### STS ###
+# .apt_generated
+# .classpath
+# .factorypath
+# .project
+# .settings
+# .springBeans
+# .sts4-cache
+# bin/
+# !**/src/main/**/bin/
+# !**/src/test/**/bin/
+
+# ### IntelliJ IDEA ###
+# application.properties
+# application-login.properties
+
+# .idea
+# *.iws
+# *.iml
+# *.ipr
+# out/
+# !**/src/main/**/out/
+# !**/src/test/**/out/
+
+# ### NetBeans ###
+# /nbproject/private/
+# /nbbuild/
+# /dist/
+# /nbdist/
+# /.nb-gradle/
+
+# ### VS Code ###
+# .vscode/
+
+
+
+# 백엔드 - GitHub Actions용 최소 .gitignore
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+
+# IDE 캐시 (선택)
+.vscode/settings.json
+.idea/workspace.xml
+
+# 빌드 결과물 (Actions에서 재생성)
+.gradle/
+build/
+bin/
+out/
+
+# 로컬 DB (선택 - 실제 DB는 안 씀)
+data/
+*.db
+
+application-login.properties
+application.properties

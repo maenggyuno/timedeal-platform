@@ -1,0 +1,43 @@
+# # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# # dependencies
+# /node_modules
+# /.pnp
+# .pnp.js
+
+# # testing
+# /coverage
+
+# # production
+# /build
+
+# # misc
+# .DS_Store
+# .env.local
+# src/env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
+
+# npm-debug.log*
+# yarn-debug.log*
+# yarn-error.log*
+
+
+
+# 프론트엔드 - GitHub Actions용 최소 .gitignore
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+
+# IDE 캐시 (선택)
+.vscode/settings.json
+
+# 빌드 결과물 (Actions에서 재생성)
+build/
+dist/
+
+# node_modules는 package.json으로 재생성
+node_modules/
+
+.env

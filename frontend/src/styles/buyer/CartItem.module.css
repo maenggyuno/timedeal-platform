@@ -1,0 +1,183 @@
+/* CartItem.module.css */
+.cartItem {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 0;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    position: relative;
+    transition: opacity 0.3s;
+}
+
+.deletedStoreItem {
+    opacity: 0.6;
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+/* ✨ 메시지와 버튼을 감싸는 컨테이너 스타일 수정 */
+.deletedStoreMessage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    flex-direction: column; /* ✨ 세로 정렬로 변경 */
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+    z-index: 10;
+    gap: 10px; /* ✨ 텍스트와 버튼 사이 간격 추가 */
+}
+
+/* ✨ 메시지 텍스트 스타일 */
+.messageText {
+    color: #d9534f;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ✨ 개별 삭제 버튼 스타일 추가 */
+.deleteButton {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.deleteButton:hover {
+    background-color: #c9302c;
+}
+
+
+.checkboxContainer {
+    margin-right: 15px;
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.imageContainer {
+    width: 120px;
+    height: 120px;
+    margin-right: 20px;
+    border: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.productImage {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.productInfo {
+    flex: 1;
+}
+
+.storeLink {
+    display: block;
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 8px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.storeLink:hover {
+    text-decoration: underline;
+}
+
+.productName {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.productPrice {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.priceQuantityContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.quantityControl {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.quantityButton {
+    background-color: #f8f9fa;
+    border: none;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+}
+
+.quantityButton:hover {
+    background-color: #e9ecef;
+}
+
+.quantityButton:first-child {
+    border-right: 1px solid #ddd;
+}
+
+.quantityButton:last-child {
+    border-left: 1px solid #ddd;
+}
+
+.quantityInput {
+  width: 40px;
+  height: 30px; 
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  border: none;
+  background-color: transparent;
+}
+
+.quantityInput:focus {
+  outline: none;
+}
+
+.quantityButton:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+/* --- 모바일 화면을 위한 미디어 쿼리 --- */
+@media (max-width: 1000px) {
+  .priceQuantityContainer {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+}

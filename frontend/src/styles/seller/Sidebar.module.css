@@ -1,0 +1,112 @@
+:root{
+    --sidebar-bg:#111;
+    --sidebar-fg:#fff;
+    --sidebar-link:#aaa;
+    --sidebar-link-hover:#fff;
+    --divider:rgba(255,255,255,0.2);
+    --toggle-bg:rgba(255,255,255,0.06);
+    --toggle-border:rgba(255,255,255,0.12);
+}
+
+/* 사이드바 패널 */
+.sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    /* width는 JS에서 인라인으로 주입 (기본 180px) */
+    background: var(--sidebar-bg);
+    color: var(--sidebar-fg);
+    border-right: 1px solid rgba(0,0,0,0.4);
+    box-shadow: 6px 0 24px rgba(0,0,0,0.3);
+    transform: translateX(0);
+    transition: width 200ms ease, padding 200ms ease, transform 200ms ease;
+    overflow: hidden auto;
+    z-index: 19;
+    padding: 32px 20px;
+    
+    /* --- 수정된 부분: flexbox 레이아웃 적용 --- */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar h3{
+    font-size:18px;
+    font-weight:600;
+    margin:0 0 16px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--divider);
+}
+
+.sidebar ul{ list-style:none; margin:0; padding:0; }
+.sidebar li{ margin:16px 0; }
+
+.sidebar a{
+    color:var(--sidebar-link);
+    text-decoration:none;
+    font-size:14px;
+    font-weight:400;
+    transition:color .2s;
+}
+.sidebar a:hover{ color:var(--sidebar-link-hover); }
+
+/* --- 추가된 부분: 사이드바 푸터 스타일 --- */
+.sidebarFooter {
+    padding-bottom: 16px; /* 하단 여백 추가 */
+}
+
+.sidebarFooter hr {
+    border: none;
+    border-top: 1px solid var(--divider);
+    margin: 16px 0;
+}
+/* ------------------------------------- */
+
+/* 닫힘 상태 */
+.sidebarClosed{
+    width: 0 !important;
+    padding-left: 0;
+    padding-right: 0;
+}
+.sidebarClosed > *{ display:none; }
+
+/* 토글 버튼 (왼쪽 가장자리) */
+.sidebarToggle{
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 50px;
+    border-radius: 0 10px 10px 0;
+    background-color: #111;
+    color: #aaa;
+    border: 1px solid #333;
+    border-left: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    padding-left: 2px;
+    z-index: 100;
+    transition: left 200ms ease, background-color .2s ease, color .2s ease;
+}
+.sidebarToggle:hover{
+    background-color:#222;
+    color:#fff;
+}
+
+/* CSS 삼각형 (열림: ◀, 닫힘: ▶) */
+.triangle{
+    width:0; height:0;
+    border-top:7px solid transparent;
+    border-bottom:7px solid transparent;
+}
+.triangle.open{  border-right:10px solid rgba(255,255,255,0.9); margin-left:-2px; } /* ◀ */
+.triangle.close{ border-left:10px solid rgba(255,255,255,0.9);  margin-right:-2px; } /* ▶ */
+
+/* 모바일에선 오버레이 느낌 강화 */
+@media (max-width: 768px){
+    .sidebar{ box-shadow:8px 0 16px rgba(0,0,0,0.35); }
+}

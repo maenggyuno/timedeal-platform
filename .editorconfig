@@ -1,0 +1,23 @@
+# EditorConfig - 모든 개발 도구(IDE)가 지켜야 할 약속
+root = true
+
+# 1. 모든 파일 공통 설정
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# 2. 자바 (Spring) 표준: 4칸
+[*.java]
+indent_size = 4
+
+# 3. 프론트엔드 (React, Vue, JS) 및 설정 파일 표준: 2칸
+[*.{js,jsx,ts,tsx,vue,json,yml,yaml,html,css,scss}]
+indent_size = 2
+
+# 4. 마크다운 (README.md) 설정
+[*.md]
+trim_trailing_whitespace = false

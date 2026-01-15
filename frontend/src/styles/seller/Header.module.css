@@ -1,0 +1,155 @@
+.header {
+  background-color: #0e0e0e;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 60px;
+  border-bottom: 1px solid #222;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  width: 100%;
+  left: 0;
+  box-sizing: border-box;
+}
+
+.leftSection {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.logo {
+  height: 36px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+}
+
+.navLinks {
+  display: flex;
+  gap: 28px;
+}
+
+.navLinks a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 300;
+  transition: color 0.2s;
+}
+
+.navLinks a:hover {
+  color: #aaa;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.rightSection a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.rightSection a:hover {
+  color: #fff;
+}
+
+.icon {
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.search-bar-container {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: width 0.3s ease;
+  width: 160px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #888;
+  width: 200px;
+}
+
+.search-button {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 16px;
+  margin-left: 6px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.search-button:hover {
+  color: #fff;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.authButton {
+  background: transparent;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color .2s;
+  color: #ccc;
+}
+
+.authButton:hover {
+  background-color: #eee;
+  color: #000000; 
+}
+
+@media (max-width: 400px) {
+  .header {
+    padding: 16px 20px;
+  }
+
+  .navLinks a {
+    font-size: 16px;
+  }
+
+  .authButton {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+}
+
+@media (max-width: 340px) {
+  .header {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .navLinks a {
+    white-space: nowrap; 
+    overflow: hidden;       
+    text-overflow: ellipsis; 
+  }
+}

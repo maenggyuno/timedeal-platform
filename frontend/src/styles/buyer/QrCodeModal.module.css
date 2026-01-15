@@ -1,0 +1,56 @@
+/* styles/buyer/QrCodeModal.module.css */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #888;
+}
+
+.closeButton:hover {
+    color: #333;
+}
+
+.qrCodeContainer {
+  margin: 20px 0;
+}
+
+/* h2 태그 선택자 대신 사용할 클래스 */
+.modalTitle {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* p 태그 선택자 대신 사용할 클래스 */
+.modalDescription {
+    color: #555;
+    font-size: 0.9rem;
+}

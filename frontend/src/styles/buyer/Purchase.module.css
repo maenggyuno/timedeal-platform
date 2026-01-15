@@ -1,0 +1,107 @@
+/* 구매 완료 페이지 스타일 */
+.completedPage {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.mainContainer {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.pageHeader {
+    margin-bottom: 2rem;
+}
+
+.pageTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.pageDescription {
+    color: #4a5568;
+}
+
+/* 상품 그리드 */
+.productGrid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+}
+
+/* 반응형 그리드 */
+@media (min-width: 768px) {
+    .productGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .productGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* 로딩 관련 스타일 */
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 16rem;
+}
+
+.loadingSpinner {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 0.25rem solid #e2e8f0;
+    border-top-color: #2d3748;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 빈 상태 메시지 */
+.emptyState {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+}
+
+.emptyMessage {
+    font-size: 1.125rem;
+    color: #4a5568;
+}
+
+/* 더보기 버튼 관련 */
+.loadMoreContainer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.loadMoreButton {
+    padding: 0.5rem 1.5rem;
+    background-color: #2d3748;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.loadMoreButton:hover {
+    background-color: #4a5568;
+}
+
+.loadMoreButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}

@@ -1,0 +1,96 @@
+.container {
+  max-width: 700px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+.container h2 {
+  margin-bottom: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+}
+
+/* [수정] input과 select에 동일한 스타일 적용 */
+input,
+select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-top: 4px; /* label과의 간격 추가 */
+  background-color: white; /* select 배경색 보장 */
+}
+
+.smallButton {
+  padding: 12px 20px;
+  font-size: 14px;
+  min-width: 60px;
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.smallButton:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.submitButton {
+  flex: 7;
+  background-color: #2563eb;
+  color: white;
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.submitButton:hover {
+  background-color: #1e40af;
+}
+
+.cancelButton {
+  flex: 3;
+  background-color: #e5e7eb;
+  color: #333;
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.cancelButton:hover {
+  background-color: #d1d5db;
+}
+
+.message {
+  margin-top: 16px;
+  font-size: 14px;
+  color: green;
+}

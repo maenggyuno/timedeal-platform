@@ -1,0 +1,325 @@
+/* ========================================= */
+/* 1. 페이지 기본 레이아웃 (ProductDetailPage) */
+/* ========================================= */
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.left-area {
+  width: 40%;
+  max-width: 768px;
+}
+
+.right-area {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 24px 0;
+}
+
+
+/* ========================================= */
+/* 2. 상품 정보 (ProductInfo) */
+/* ========================================= */
+.product-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.product-price {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  text-align: right;
+  color: #FF0000; /* 빨간색 */
+}
+
+.product-expiry {
+  font-size: 15px;
+  color: #888;
+  margin-top: 8px;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.product-buy-btn,
+.product-cart-btn {
+  flex-grow: 1;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+.product-buy-btn {
+  background-color: #ffce2e;
+  color: rgb(0, 0, 0);
+  border-color: #ffce2e;
+}
+
+.product-cart-btn {
+  background-color: white;
+  color: #000000;
+  border-color: #ffce2e;
+}
+
+
+/* ========================================= */
+/* 3. 하단 매장 정보 영역 (StoreInfo) - 수정된 부분 */
+/* ========================================= */
+.store-section-container {
+  max-width: 1200px;
+  margin: 20px auto 40px auto;
+  padding: 0 20px;
+}
+
+/* 여기부터 수정된 부분: 박스 관련 스타일 모두 제거 */
+/* .store-info-wrapper {
+  이전에 있던 border, padding, border-radius, background-color 속성을 모두 제거했습니다.
+} */
+/* 여기까지 수정된 부분 */
+
+.store-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 16px 0;
+}
+
+.store-info-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.store-main-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.store-address-content {
+  border-left: 1px solid #eee;
+  padding-left: 40px;
+  min-height: 100%;
+}
+
+.store-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.store-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.follow-btn {
+  padding: 6px 14px;
+  border-radius: 5px;
+  color: rgb(0, 0, 0);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.store-stats {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.store-address-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+}
+
+.store-address {
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+}
+
+.clickable-address {
+  cursor: pointer;
+  color: #007bff;
+  text-decoration: underline;
+  display: inline-block;
+}
+
+.clickable-address:hover {
+  color: #0056b3;
+}
+
+
+/* ========================================= */
+/* 4. 우측 상품 설명 (ProductDescription) */
+/* ========================================= */
+.product-description-section {
+  margin-top: 16px;
+}
+
+.description-title {
+  font-size: 20px;
+  font-weight: 600;
+  padding-bottom: 12px;
+}
+
+.description-content {
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap; /* ✨ 이 한 줄을 추가하면 됩니다! */
+}
+
+
+/* ================================================= */
+/* 5. 반응형 스타일 (모바일 환경) */
+/* ================================================= */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 20px;
+    padding: 16px;
+  }
+
+  .left-area,
+  .right-area {
+    width: 100%;
+  }
+
+  .product-name {
+    font-size: 24px;
+  }
+
+  .product-price {
+    font-size: 20px;
+  }
+
+  .store-section-container {
+      margin-top: 20px;
+  }
+
+  .store-info-layout {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .store-address-content {
+    text-align: left;
+    padding-left: 0;
+    border-left: none;
+  }
+}
+
+/* 유통기한과 수량 선택기를 한 줄에 배치하기 위한 flexbox 컨테이너 */
+.info-row {
+  display: flex;
+  justify-content: space-between; /* 양쪽 끝으로 요소를 분배 */
+  align-items: center; /* 세로 중앙 정렬 */
+  margin: 20px 0; /* 위아래 여백 */
+}
+
+/* 수량 선택기 전체 박스 */
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden; /* 버튼의 각진 모서리를 둥글게 처리 */
+}
+
+/* 수량 표시 영역 */
+/* .quantity-selector span {
+  display: inline-block;
+  width: 40px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+} */
+ /* ✅ input 필드에 대한 새로운 스타일 추가 */
+.quantity-input {
+  width: 40px;
+  height: 35px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  border: none;
+  background-color: transparent; /* 배경을 투명하게 */
+}
+
+/* input 필드에 포커스될 때 테두리가 생기지 않도록 처리 */
+.quantity-input:focus {
+  outline: none;
+}
+
+/* +, - 버튼 공통 스타일 */
+.quantity-selector button {
+  width: 35px;
+  height: 35px;
+  border: none;
+  background-color: #f5f5f5;
+  color: #555;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.quantity-selector button:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+/* 비활성화된 버튼 스타일 */
+.quantity-selector button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 각 버튼의 좌우 테두리 구분선 */
+.quantity-selector button:first-of-type {
+  border-right: 1px solid #ddd;
+}
+
+.quantity-selector button:last-of-type {
+  border-left: 1px solid #ddd;
+}
+
+/* 유통기한 p 태그에 마진이 있다면 제거하여 정렬을 맞춤 */
+.product-expiry {
+  margin: 0;
+}

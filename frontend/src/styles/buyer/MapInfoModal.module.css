@@ -1,0 +1,212 @@
+.map-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.map-modal-content {
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 750px;
+    display: flex;
+    flex-direction: column;
+}
+
+.map-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+}
+
+.map-modal-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #333;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+}
+
+.modal-close-btn:hover {
+    color: #333;
+}
+
+.map-modal-body {
+    overflow-y: auto;
+    max-height: 70vh;
+    padding-right: 10px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.info-item strong {
+    font-weight: 600;
+    margin-right: 8px;
+    color: #555;
+    flex-shrink: 0;
+}
+
+.info-item p {
+    margin: 0;
+    color: #333;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 24px 0;
+}
+
+.products-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.loading-text, .error-text {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+.error-text {
+    color: #d32f2f;
+}
+
+.modal-product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* --- 모달 전용 상품 아이템 스타일 --- */
+.modal-product-item {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: white;
+    transition: all 0.2s ease-in-out;
+}
+
+.modal-product-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+}
+
+.modal-product-image-container {
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+    background-color: #f7f7f7;
+}
+
+.modal-product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-product-info {
+    padding: 12px;
+    text-align: left;
+}
+
+.modal-product-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal-product-price {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* 더보기 버튼 스타일 (Product.module.css 참고) */
+.more-button-container {
+    margin-top: 30px; 
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.more-button {
+    width: 100%;
+    padding: 14px 20px;
+    background-color: #fff;
+    border: 2px solid #ececec;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.more-button:hover {
+    background-color: #6fc1ff;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.more-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.more-button:disabled {
+    background-color: #f8f8f8;
+    border-color: #ddd;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* 반응형 처리: 모바일 */
+@media (max-width: 768px) {
+    .map-modal-content {
+        padding: 16px;
+    }
+    .modal-product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}

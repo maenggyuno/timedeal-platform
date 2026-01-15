@@ -1,0 +1,166 @@
+/* Cart.module.css */
+.cartWrapper {
+    width: 100%;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.cartContainer {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+    padding-bottom: 40px;
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+.cartTitle {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.mobileSelectOptions {
+    display: flex;
+    gap: 10px;
+}
+
+.cartActions {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    gap: 15px;
+}
+
+.desktopSelectOptions {
+    display: none;
+}
+
+/* ✅ 버튼 스타일 수정: flex로 아이콘과 텍스트 정렬 */
+.selectButton {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* 아이콘과 텍스트 사이 간격 */
+    border: 1px solid #ddd;
+    background-color: white;
+    padding: 8px 12px; /* 패딩 조정 */
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s; /* 부드러운 색상 전환 효과 */
+}
+
+/* ✅ 버튼 호버 효과 추가 */
+.selectButton:hover {
+    background-color: #f5f5f5;
+}
+
+.selectButton.active {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    font-weight: 500;
+}
+
+/* ✅ 아이콘 스타일 추가 */
+.icon {
+    width: 16px;
+    height: 16px;
+    color: #555;
+}
+
+.selectButton.active .icon {
+    color: #000;
+}
+
+
+.cartSummary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.totalAmount {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.purchaseButton {
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.purchaseButton:hover {
+    background-color: #333;
+}
+
+.cartItemsContainer {
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.cartItemsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+/* 모바일 환경에서는 타이틀 영역에 버튼이 표시되도록 함 */
+@media screen and (max-width: 767px) {
+    .mobileSelectOptions {
+        display: flex;
+    }
+
+    .desktopSelectOptions {
+        display: none;
+    }
+
+    .selectButton {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .icon {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+/* 768px 이상의 화면(데스크톱)에서는 2열로 표시 및 원래 레이아웃으로 복원 */
+@media screen and (min-width: 768px) {
+    .cartItemsGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .cartActions {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .cartSummary {
+        width: auto;
+        gap: 20px;
+    }
+
+    .mobileSelectOptions {
+        display: none;
+    }
+
+    .desktopSelectOptions {
+        display: flex;
+        gap: 10px;
+    }
+}

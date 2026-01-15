@@ -1,0 +1,364 @@
+/*!* Footer.module.css *!*/
+/*.footer {*/
+/*    width: 100%;*/
+/*    padding: 40px 0;*/
+/*    border-top: 1px solid #eee;*/
+/*    background-color: #fff;*/
+/*    font-family: 'Noto Sans KR', sans-serif;*/
+/*    color: #666;*/
+/*    font-size: 13px;*/
+/*    line-height: 1.5;*/
+/*}*/
+
+/*.footerContainer {*/
+/*    max-width: 1200px;*/
+/*    margin: 0 auto;*/
+/*    padding: 0 20px;*/
+/*    display: flex;*/
+/*    flex-wrap: wrap;*/
+/*    justify-content: space-between;*/
+/*}*/
+
+/*.companyInfo {*/
+/*    flex-basis: 60%;*/
+/*    max-width: 60%;*/
+/*}*/
+
+/*.customerService {*/
+/*    flex-basis: 35%;*/
+/*    max-width: 35%;*/
+/*}*/
+
+/*.companyTitle {*/
+/*    font-size: 16px;*/
+/*    font-weight: 600;*/
+/*    margin-bottom: 15px;*/
+/*    color: #333;*/
+/*}*/
+
+/*.infoRow {*/
+/*    margin-bottom: 5px;*/
+/*    display: flex;*/
+/*    flex-wrap: wrap;*/
+/*}*/
+
+/*.infoRow span {*/
+/*    margin-right: 10px;*/
+/*}*/
+
+/*.infoBlock {*/
+/*    margin-bottom: 20px;*/
+/*}*/
+
+/*.highlight {*/
+/*    color: #333;*/
+/*    font-weight: 500;*/
+/*}*/
+
+/*.contactLink {*/
+/*    display: inline-block;*/
+/*    padding: 5px 10px;*/
+/*    border: 1px solid #ddd;*/
+/*    border-radius: 4px;*/
+/*    text-decoration: none;*/
+/*    color: #666;*/
+/*    margin-right: 10px;*/
+/*    margin-bottom: 10px;*/
+/*}*/
+
+/*.sellerCenterBlock {*/
+/*    margin-bottom: 30px;*/
+/*}*/
+
+/*.sellerCenterButton {*/
+/*    display: inline-block;*/
+/*    padding: 12px 20px;*/
+/*    background-color: #f8f8f8;*/
+/*    border: 1px solid #ddd;*/
+/*    border-radius: 6px;*/
+/*    text-decoration: none;*/
+/*    color: #333;*/
+/*    font-weight: 600;*/
+/*    font-size: 16px;*/
+/*    transition: all 0.3s ease;*/
+/*}*/
+
+/*.sellerCenterButton:hover {*/
+/*    background-color: #74c0fc;*/
+/*    color: white;*/
+/*    transform: translateY(-2px);*/
+/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+/*.arrowIcon {*/
+/*    margin-left: 10px;*/
+/*    font-weight: 600;*/
+/*}*/
+
+/*.contactLink:hover {*/
+/*    background-color: #f8f8f8;*/
+/*}*/
+
+/*.disclaimer {*/
+/*    width: 100%;*/
+/*    margin-top: 30px;*/
+/*    padding-top: 20px;*/
+/*    border-top: 1px solid #eee;*/
+/*    font-size: 12px;*/
+/*    color: #999;*/
+/*    line-height: 1.6;*/
+/*}*/
+
+/*.copyright {*/
+/*    width: 100%;*/
+/*    margin-top: 20px;*/
+/*    font-size: 12px;*/
+/*    color: #999;*/
+/*    text-align: left;*/
+/*}*/
+
+/*.serviceTitle {*/
+/*    font-weight: 600;*/
+/*    font-size: 15px;*/
+/*    margin-bottom: 10px;*/
+/*    color: #333;*/
+/*}*/
+
+/*.certificationLogo {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    margin-bottom: 15px;*/
+/*}*/
+
+/*.certificationLogo img {*/
+/*    width: 40px;*/
+/*    height: 40px;*/
+/*    margin-right: 10px;*/
+/*}*/
+
+/*.certificationInfo {*/
+/*    font-size: 12px;*/
+/*    color: #999;*/
+/*}*/
+/*.contactNumber {*/
+/*    font-size: 30px;*/
+/*    font-weight: bold;*/
+/*}*/
+
+/*!* 반응형 스타일 *!*/
+/*@media (max-width: 768px) {*/
+/*    .footerContainer {*/
+/*        flex-direction: column;*/
+/*    }*/
+
+/*    .companyInfo, .customerService {*/
+/*        flex-basis: 100%;*/
+/*        max-width: 100%;*/
+/*    }*/
+
+/*    .customerService {*/
+/*        margin-top: 30px;*/
+/*    }*/
+
+/*    .contactNumber {*/
+/*        font-size: 24px;*/
+/*    }*/
+/*}*/
+
+/* Footer.module.css */
+.footer {
+    width: 100%;
+    padding: 40px 0;
+    border-top: 1px solid #eee;
+    background-color: #fff;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.footerContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.companyInfo {
+    flex-basis: 60%;
+    max-width: 60%;
+}
+
+.customerService {
+    flex-basis: 35%;
+    max-width: 35%;
+}
+
+.companyTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.infoRow {
+    margin-bottom: 5px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.infoRow span {
+    margin-right: 10px;
+}
+
+.infoBlock {
+    margin-bottom: 20px;
+}
+
+.highlight {
+    color: #333;
+    font-weight: 500;
+}
+
+.contactLink {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #666;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.sellerCenterBlock {
+    margin-bottom: 30px;
+}
+
+.sellerCenterButton {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.sellerCenterButton:hover {
+    background-color: #74c0fc;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.arrowIcon {
+    margin-left: 10px;
+    font-weight: 600;
+}
+
+.contactLink:hover {
+    background-color: #f8f8f8;
+}
+
+.disclaimer {
+    width: 100%;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    font-size: 12px;
+    color: #999;
+    line-height: 1.6;
+}
+
+.copyright {
+    width: 100%;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #999;
+    text-align: left;
+}
+
+.serviceTitle {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.certificationLogo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.certificationLogo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.certificationInfo {
+    font-size: 12px;
+    color: #999;
+}
+.contactNumber {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .footerContainer {
+        flex-direction: column;
+    }
+
+    .companyInfo, .customerService {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+
+    /* 모바일에서 순서 변경을 위한 스타일 */
+    .footerContainer > .sellerCenterBlock {
+        display: block; /* 모바일에서 최상단 버튼 표시 */
+        width: 100%;
+        order: 1;
+        margin-bottom: 20px;
+    }
+
+    /* 고객센터 정보 두 번째로 */
+    .customerService {
+        display: flex;
+        flex-direction: column;
+        order: 2;
+    }
+
+    /*!* 고객센터 내의 판매자센터 버튼은 모바일에서 숨김 *!*/
+    /*.customerService .sellerCenterBlock {*/
+    /*    display: none;*/
+    /*}*/
+
+    /* 사업자 정보 세 번째로 */
+    .companyInfo {
+        order: 3;
+        margin-top: 30px;
+    }
+
+    /* 면책 문구, 저작권 정보는 그대로 맨 아래에 */
+    .disclaimer {
+        order: 4;
+    }
+
+    .copyright {
+        order: 5;
+    }
+
+    .contactNumber {
+        font-size: 24px;
+    }
+}

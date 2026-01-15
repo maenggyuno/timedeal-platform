@@ -1,0 +1,256 @@
+.purchaseStatusContainer {
+    width: 100%;
+  }
+  
+  .storeLink {
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .storeLink:hover {
+    color: #000;
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 30px;
+  }
+  
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .tab.active {
+    color: #000;
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+  }
+  
+  .productsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .productCard {
+    display: flex;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    border-radius: 5px;
+  }
+  
+  .message {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    color: #888;
+    font-size: 16px;
+  }
+
+  .error {
+    color: red;
+  }
+  
+  .productDetails {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .productInfo {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .productName {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+
+  .quantity {
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+  
+  .price {
+    font-size: 15px;
+    margin-bottom: 5px;
+  }
+
+  .creditMethod {
+    font-size: 15px;
+    margin-bottom: 5px;
+    color : #ff0000
+  }
+  
+  .timeContainer, .reviewContainer, .expiredContainer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+  }
+ 
+  .expiredLabel {
+    font-size: 14px;
+    color: #888;
+    font-weight: 500;
+  }
+  
+  .remainingTimeLabel, .purchaseLabel {
+    font-size: 14px;
+    color: #666;
+    margin-right: 10px;
+  }
+  
+  .remainingTime {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 15px;
+  }
+
+  .productImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 1px solid #eee;
+    border-radius: 10px;
+  }
+  
+  .reviewCompletedButton {
+    background-color: #f0f0f0;
+    color: #888;
+    cursor: not-allowed;
+  }
+
+  .checkReviewButton {
+    border-color: #007bff;
+    color: #007bff;
+  }
+
+  .extendTimeButton:hover, .writeReviewButton:hover, .checkReviewButton:hover, .cancelButton:hover {
+    background-color: #f8f8f8;
+  }
+  
+  /* ======================================= */
+  /* ============= 추가된 코드 ============= */
+  /* ======================================= */
+  
+  .imageAndQrContainer {
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+    margin-right: 15px;
+    flex-shrink: 0;
+  }
+  
+  .imageContainer {
+    width: 100%;
+    height: 120px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  
+  .qrButtonContainer {
+    margin-top: 10px;
+  }
+  
+  .checkQrButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  
+  .checkQrButton:hover {
+    background-color: #0056b3;
+  }
+  
+  .buttonGroup {
+    display: flex;
+  }
+  
+  .extendTimeButton, .writeReviewButton, .reviewCompletedButton, .checkReviewButton,
+  .cancelButton {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    transition: all 0.2s ease;
+    margin-right: 5px;
+  }
+
+  .extendTimeButton:last-child, .cancelButton:last-child {
+    margin-right: 0;
+  }
+  
+  .cancelButton {
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+  
+  .cancelButton:hover {
+    background-color: #f8d7da;
+  }
+  
+  @media (max-width: 1043px) {
+    .timeContainer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .buttonGroup {
+      margin-top: 10px;
+    }
+
+    .extendTimeButton, .cancelButton {
+      margin-right: 5px;
+    }
+  }
+  
+  @media (max-width: 800px) {
+    .productsGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 530px) {
+    
+    .remainingTimeLabel, .purchaseLabel {
+      margin-bottom: 5px;
+    }
+    
+    .remainingTime {
+      margin-bottom: 10px;
+    }
+  }
+
+  @media (max-width: 370px) {
+    .reviewContainer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    
+      .purchaseLabel {
+        margin-bottom: 5px;
+      }
+
+    .writeReviewButton, .reviewCompletedButton {
+      margin-top: 5px;
+    }
+  }

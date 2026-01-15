@@ -1,0 +1,13 @@
+# 1. 운영체제(OS) 관련 파일 (Mac/Windows)
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# 2. IDE 설정 파일 (IntelliJ, VS Code)
+.idea/
+.vscode/
+*.iml
+
+# 3. 로그 파일
+*.log

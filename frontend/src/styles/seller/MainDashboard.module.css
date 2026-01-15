@@ -1,0 +1,144 @@
+/* 기본 전역 스타일 */
+.body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.dashboard-container {
+    flex-grow: 1;
+    padding: 40px; /* 좌우 패딩 통일 */
+    margin: 0 auto; /* 중앙 정렬 */
+    max-width: 1200px; /* 최대 너비 설정 */
+    width: 100%;
+}
+
+/* --- 제목과 버튼을 위한 헤더 --- */
+.dashboard-header {
+    display: flex;
+    /* justify-content: space-between; 제거 */
+    /* align-items: center; 제거 */
+    flex-direction: column; /* 아이템을 세로로 정렬 */
+    align-items: flex-start; /* 아이템을 왼쪽으로 정렬 */
+    gap: 15px; /* 제목과 버튼 사이의 간격 추가 */
+    margin-bottom: 30px;
+}
+
+.dashboard-header h2 {
+    font-size: 32px;
+    color: #333;
+    margin: 0; 
+}
+
+/* --- 매장 추가 버튼 (새로 추가) --- */
+.add-store-button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+
+    /* ▼▼▼ 이 줄을 추가하세요 ▼▼▼ */
+    align-self: flex-end; /* 부모의 정렬을 무시하고 오른쪽 끝으로 이동 */
+}
+
+.add-store-button:hover {
+    background-color: #1e40af;
+}
+
+.mart-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    justify-content: center; /* ▼▼▼ 이 줄을 추가하세요 ▼▼▼ */
+}
+
+/* --- 각 마트 아이템 스타일 수정 --- */
+.mart-item {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    cursor: pointer;
+}
+
+.mart-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.mart-info h3 {
+    margin: 0;
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.mart-info p {
+    font-size: 15px;
+    margin: 0;
+    color: #666;
+}
+
+/* --- 드롭다운 메뉴 스타일 --- */
+.menu-container {
+    position: relative;
+}
+
+.menu-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 50%;
+    line-height: 1;
+}
+
+.menu-button:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    width: 120px;
+    overflow: hidden;
+}
+
+.dropdown-menu button {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dropdown-menu button:hover {
+    background-color: #f5f5f5;
+}

@@ -1,0 +1,111 @@
+/* 모달 배경: 화면 전체를 덮는 반투명 레이어 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* 모달 창: 실제 컨텐츠가 들어갈 흰색 박스 */
+.modalContent {
+  position: relative; /* ✅ 1. X 버튼을 절대 위치로 잡기 위해 부모 요소를 relative로 설정 */
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  z-index: 1001;
+}
+
+/* ✅ 2. X 아이콘 버튼 스타일 추가 */
+.closeIcon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 2rem; /* 아이콘 크기 */
+  color: #888;
+  cursor: pointer;
+  line-height: 1; /* 라인 높이를 1로 설정하여 수직 정렬을 맞춤 */
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.closeIcon:hover {
+  color: #000; /* 마우스를 올리면 색상을 진하게 변경 */
+}
+
+
+.modalContent h2 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* 모달 내부 버튼 그룹 */
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.buttonGroup button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.buttonGroup button {
+  background-color: #ffeba9;
+  color: #000000;
+  border-color: #ffce2e;
+}
+.buttonGroup button:hover {
+  background-color: #ffce2e;
+  border-color: #ffce2e;
+}
+
+/* ✅ 3. 기존 '닫기' 버튼 스타일은 더 이상 필요 없으므로 삭제합니다. */
+/*
+.closeButton {
+  ...
+}
+*/
+
+.description {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.backButton {
+    background-color: #6c757d; /* 회색 계열 */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px; /* 위쪽 버튼 그룹과의 간격 */
+    width: 100%;
+}
+
+.backButton:hover {
+    background-color: #5a6268;
+}

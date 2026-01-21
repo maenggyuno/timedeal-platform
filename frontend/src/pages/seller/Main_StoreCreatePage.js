@@ -25,9 +25,12 @@ const Main_StoreCreatePage = () => {
   const navigate = useNavigate();
   const detailAddressRef = useRef(null);
   const tokenCache = useRef({ token: null, exp: 0 });
-  
+
   const SGIS_KEY = process.env.REACT_APP_SGIS_KEY;
   const SGIS_SECRET = process.env.REACT_APP_SGIS_SECRET;
+  //프록시 cors 해결을 위한 상대경로 설정 세팅 로컬은 Proxy(상대 경로)를 태우고, 배포는 실제 도메인을 사용하도록 분기
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+
 
   // --- 스크립트 로드 ---
   useEffect(() => {
@@ -48,7 +51,7 @@ const Main_StoreCreatePage = () => {
       setMessage('SGIS API 키가 설정되지 않았습니다.');
       throw new Error('SGIS KEY/SECRET is not set');
     }
-    const url = `https://sgisapi.kostat.go.kr/OpenAPI3/auth/authentication.json?consumer_key=${SGIS_KEY}&consumer_secret=${SGIS_SECRET}`;
+    const url = `${BASE_URL}/OpenAPI3/auth/authentication.json?consumer_key=${SGIS_KEY}&consumer_secret=${SGIS_SECRET}`;
     const res = await fetch(url);
     const data = await res.json();
     if (data.errCd !== 0 || !data?.result?.accessToken) {
@@ -63,7 +66,7 @@ const Main_StoreCreatePage = () => {
     try {
       const token = await getSgisToken();
       const url =
-        `https://sgisapi.kostat.go.kr/OpenAPI3/addr/geocodewgs84.json` +
+        `${BASE_URL}/OpenAPI3/addr/geocodewgs84.json` +
         `?accessToken=${encodeURIComponent(token)}` +
         `&address=${encodeURIComponent(addr)}`;
       const res = await fetch(url);
@@ -113,7 +116,7 @@ const Main_StoreCreatePage = () => {
     if (window.daum && window.daum.Postcode) {
       new window.daum.Postcode({
         oncomplete: (data) => {
-          setPostcode(data.zonecode); 
+          setPostcode(data.zonecode);
           setBaseAddress(data.address);
           detailAddressRef.current?.focus();
         },
@@ -155,7 +158,7 @@ const Main_StoreCreatePage = () => {
         setBizCheckState('error');
         return;
       }
-      
+
       // [수정] 'valid'가 아니면 모두 'invalid'로 처리
       if (item.b_stt_cd === '01') {
         setBizCheckState('valid');
@@ -233,7 +236,7 @@ const Main_StoreCreatePage = () => {
           </div>
           <input type="text" value={baseAddress} placeholder="주소" readOnly style={{ marginTop: '8px', width: '100%' }} />
           <input ref={detailAddressRef} type="text" value={detailAddress} onChange={(e) => setDetailAddress(e.target.value)} placeholder="상세주소 입력" style={{ marginTop: '8px', width: '100%' }} required />
-          
+
           <label>전화번호:
             <input type="tel" value={phone} onChange={handlePhoneChange} placeholder="예) 010-1234-5678" required />
           </label>
@@ -254,7 +257,7 @@ const Main_StoreCreatePage = () => {
               {bizCheckState === 'valid' ? '확인완료' : (bizCheckState === 'checking' ? '확인중...' : '진위 확인')}
             </button>
           </div>
-          
+
           <div style={{display: 'flex', gap: '1rem'}}>
             <label style={{flex: 1}}>오픈 시간:
               <input type="time" value={openTime} onChange={(e) => setOpenTime(e.target.value)} required />

@@ -41,7 +41,7 @@
 ## 3. 시스템 아키텍처 (System Architecture)
 Nginx를 리버스 프록시로 두고, 프론트엔드와 백엔드를 Docker 컨테이너로 분리하여 마이크로서비스 형태의 배포 환경을 구축했습니다.
 
-![img.png](img.png)
+![img.png](assets/images/img.png)
 <br>
 
 ## 4. 담당 역할 및 기여도 (My Contributions)
@@ -90,7 +90,7 @@ Nginx를 리버스 프록시로 두고, 프론트엔드와 백엔드를 Docker �
 ## 7. ERD (Entity Relationship Diagram)
 효율적인 데이터 관리를 위해 정규화된 데이터베이스 설계를 수행했습니다.
 
-![img_1.png](img_1.png)
+![img_1.png](assets/images/img_1.png)
 <br>
 
 ## 8. 설치 및 실행 방법 (How to Run)

@@ -16,7 +16,6 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-@PropertySource("classpath:application-login.properties")
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Value("${jwt.cookie.name}")

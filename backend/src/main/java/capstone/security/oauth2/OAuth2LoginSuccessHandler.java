@@ -185,7 +185,6 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@PropertySource("classpath:application-login.properties")
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;

@@ -1,5 +1,5 @@
 # Dockerfile (Backend - Spring Boot / Java 21)
-# 
+#
 # ------------------------------------------------
 # 1. 빌드(Build) 환경
 # ------------------------------------------------
@@ -37,10 +37,10 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 # 환경 변수(.env)를 Java 시스템 프로퍼티(-D)로 주입받아 앱을 실행
-ENTRYPOINT ["java", \
-            "-Dfrontend.url=${FRONTEND_URL}", \
-            "-Dcookie.secure=${COOKIE_SECURE}", \
-            "-Dspring.datasource.url=${DB_URL}", \
-            "-Dspring.datasource.username=${DB_USERNAME}", \
-            "-Dspring.datasource.password=${DB_PASSWORD}", \
-            "-jar", "app.jar"]
+ENTRYPOINT java \
+            -Dfrontend.url=${FRONTEND_URL} \
+            -Dcookie.secure=${COOKIE_SECURE} \
+            -Dspring.datasource.url=${DB_URL} \
+            -Dspring.datasource.username=${DB_USERNAME} \
+            -Dspring.datasource.password=${DB_PASSWORD} \
+            -jar app.jar

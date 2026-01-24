@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@PropertySource("classpath:application-login.properties")
 @Component
 public class JwtTokenProvider {
 

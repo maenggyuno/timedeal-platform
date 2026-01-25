@@ -248,3 +248,97 @@ rm -rf build
 ```bash
 java -jar build/libs/timedeal-platform-backend-0.0.1-SNAPSHOT.jar
 ```
+
+
+# 📑 AWS S3 & IAM Infrastructure Setup Guide
+
+본 가이드는 `timedeal-platform` 프로젝트의 확장성과 보안을 위해 **환경별 버킷 분리(Dev/Prod)** 및 **IAM 최소 권한 원칙**을 적용한 설정 과정을 기록합니다.
+
+---
+
+### 1. IAM: 권한 격리 및 계정 생성
+관리자(`admin`) 계정의 액세스 키 노출 위험을 방지하기 위해 S3 전용 그룹과 사용자를 생성하여 운영합니다.
+
+* **IAM 그룹 생성 및 정책 연결**
+    * **Group Name**: `s3-group`
+    * **Policy**: `AmazonS3FullAccess` 직접 연결
+* **IAM 사용자 생성 및 할당**
+    * **User Name**: `s3-user1`
+    * **Group**: `s3-group` (생성한 그룹 선택)
+* **액세스 키 발급**
+    * 해당 사용자 상세 페이지 > **보안 자격 증명** > **액세스 키 만들기**
+    * **Access Key ID** & **Secret Access Key** 보관 (환경 변수 등록용)
+
+---
+
+### 2. S3: 버킷 구축 및 보안 설정
+데이터 정합성을 위해 개발과 운영 버킷을 물리적으로 분리하고 브라우저 직업로드를 위한 보안 설정을 적용합니다.
+
+* **버킷 생성**
+    * `timedeal-platform-dev-s3-bucket` (로컬 개발용)
+    * `timedeal-platform-prod-s3-bucket` (서버 배포용)
+* **CORS 정책 (브라우저 Presigned URL 직업로드 허용)**
+    ```json
+    [
+      {
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["GET", "PUT", "POST", "HEAD"],
+        "AllowedOrigins": ["http://localhost:3000", "[https://your-domain.com](https://your-domain.com)"],
+        "ExposeHeaders": ["ETag"],
+        "MaxAgeSeconds": 3000
+      }
+    ]
+    ```
+* **퍼블릭 읽기 권한 (이미지 UI 노출 허용)**
+    * **퍼블릭 액세스 차단**: '모든 퍼블릭 액세스 차단' 체크 해제
+    * **버킷 정책(Bucket Policy)**:
+    ```json
+    {
+      "Version": "2012-10-17",
+      "Statement": [{
+        "Sid": "PublicReadGetObject",
+        "Effect": "Allow",
+        "Principal": "*",
+        "Action": "s3:GetObject",
+        "Resource": "arn:aws:s3:::본인-버킷-명칭/*"
+      }]
+    }
+    ```
+
+---
+
+### 3. Application: 환경별 프로파일 설정
+소스 코드 내 기민 정보 노출을 방지하기 위해 환경 변수 주입 방식을 사용합니다.
+
+* **application-dev.properties (로컬 개발)**
+    ```properties
+    cloud.aws.s3.bucket=timedeal-platform-dev-s3-bucket
+    cloud.aws.region.static=ap-northeast-2
+    cloud.aws.credentials.access-key=${AWS_ACCESS_KEY}
+    cloud.aws.credentials.secret-key=${AWS_SECRET_KEY}
+    ```
+* **application-prod.properties (서버 배포)**
+    ```properties
+    cloud.aws.s3.bucket=timedeal-platform-prod-s3-bucket
+    cloud.aws.region.static=ap-northeast-2
+    cloud.aws.credentials.access-key=${AWS_ACCESS_KEY}
+    cloud.aws.credentials.secret-key=${AWS_SECRET_KEY}
+    ```
+
+---
+
+### 4. Deployment: 실행 명령어
+배포 시점에 적절한 프로파일을 활성화하여 인프라 설정을 동적으로 주입합니다.
+
+* **Docker 실행 시 (환경 변수 주입)**
+    ```bash
+    docker run -d \
+      -e SPRING_PROFILES_ACTIVE=prod \
+      -e AWS_ACCESS_KEY=발급받은_키 \
+      -e AWS_SECRET_KEY=발급받은_비밀키 \
+      --name app-container image-name
+    ```
+* **JAR 직접 실행 시**
+    ```bash
+    java -jar -Dspring.profiles.active=prod app.jar
+    ```

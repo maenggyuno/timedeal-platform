@@ -75,7 +75,7 @@ USE timedeal_db;
 
 -- 3. 테이블 확인 (스프링 부트 실행 후 생성되었는지 확인)
 SHOW TABLES;
--- 생성된 이름이 'order_items'(Snake Case)인지 'orderItems'(Camel Case)인지 반드시 체크!
+-- 생성된 이름이 'order_items'(Snake Case)인지 'order_items'(Camel Case)인지 반드시 체크!
 ```
 
 ---
@@ -83,7 +83,7 @@ SHOW TABLES;
 ### 2. 네이밍 컨벤션 (Naming Convention) - ⭐ 가장 중요!
 윈도우(Local)와 리눅스(RDS/EC2)의 파일 시스템 차이로 인해 **대소문자 구분 이슈**가 발생합니다. 아래 표준을 반드시 따르세요.
 
-* **Java (Code):** CamelCase (`OrderItems`)
+* **Java (Code):** CamelCase (`order_items`)
 * **Database (SQL):** SnakeCase (`order_items`)
 
 **[해결 방법]**
@@ -92,12 +92,12 @@ SHOW TABLES;
     ```java
     @Entity
     @Table(name = "order_items") // DB에는 무조건 이렇게 만들어라!
-    public class OrderItems { ... }
+    public class order_items { ... }
     ```
 
 2.  **Native Query (`@Query`):** 실제 DB 테이블 이름 사용
     ```java
-    // (X) SELECT * FROM orderItems ... (리눅스에서 에러 남)
+    // (X) SELECT * FROM order_items ... (리눅스에서 에러 남)
     // (O) SELECT * FROM order_items ... (정상 동작)
     @Query(value = "SELECT * FROM order_items ...", nativeQuery = true)
     ```

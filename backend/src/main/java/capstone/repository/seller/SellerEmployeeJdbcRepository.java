@@ -32,7 +32,7 @@ public class SellerEmployeeJdbcRepository {
 
     public List<SellerEmployeeListResponse> findEmployeesByStoreId(Long storeId) {
         String sql = "SELECT u.user_id, u.name, u.email, se.authority " +
-                "FROM users u JOIN storeEmployee se ON u.user_id = se.user_id " +
+                "FROM users u JOIN store_employee se ON u.user_id = se.user_id " +
                 "WHERE se.store_id = ?";
         return jdbcTemplate.query(sql, employeeListRowMapper, storeId);
     }
@@ -42,16 +42,16 @@ public class SellerEmployeeJdbcRepository {
      */
     public void delegateManagerAuthority(Long storeId, Long oldManagerId, Long newManagerId) {
         // 1. 기존 총괄 관리자를 직원으로 강등
-        String sql1 = "UPDATE storeEmployee SET authority = 0 WHERE store_id = ? AND user_id = ?";
+        String sql1 = "UPDATE store_employee SET authority = 0 WHERE store_id = ? AND user_id = ?";
         jdbcTemplate.update(sql1, storeId, oldManagerId);
 
         // 2. 새로운 직원을 총괄 관리자로 승급
-        String sql2 = "UPDATE storeEmployee SET authority = 1 WHERE store_id = ? AND user_id = ?";
+        String sql2 = "UPDATE store_employee SET authority = 1 WHERE store_id = ? AND user_id = ?";
         jdbcTemplate.update(sql2, storeId, newManagerId);
     }
 
     public void deleteEmployees(Long storeId, List<Long> userIds) {
-        String sql = "DELETE FROM storeEmployee WHERE store_id = ? AND user_id = ?";
+        String sql = "DELETE FROM store_employee WHERE store_id = ? AND user_id = ?";
         jdbcTemplate.batchUpdate(sql, userIds, 100, (ps, userId) -> {
             ps.setLong(1, storeId);
             ps.setLong(2, userId);
@@ -65,13 +65,13 @@ public class SellerEmployeeJdbcRepository {
     }
 
     public boolean isAlreadyEmployee(Long storeId, Long userId) {
-        String sql = "SELECT COUNT(*) FROM storeEmployee WHERE store_id = ? AND user_id = ?";
+        String sql = "SELECT COUNT(*) FROM store_employee WHERE store_id = ? AND user_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, storeId, userId);
         return count != null && count > 0;
     }
 
     public void addEmployees(Long storeId, List<Long> userIds) {
-        String sql = "INSERT INTO storeEmployee (store_id, user_id, authority) VALUES (?, ?, 0)";
+        String sql = "INSERT INTO store_employee (store_id, user_id, authority) VALUES (?, ?, 0)";
         jdbcTemplate.batchUpdate(sql, userIds, 100, (ps, userId) -> {
             ps.setLong(1, storeId);
             ps.setLong(2, userId);

@@ -39,7 +39,7 @@ public class BuyerPaymentService {
      *  */
     @Transactional
     public Long onSitePayment(Long buyerId, Long productId, Integer quantity) {
-        // 1. DB 연결 (orderItems에 추가) + orderId 추출
+        // 1. DB 연결 (order_items에 추가) + orderId 추출
         Long orderId = paymentRepository.onSitePayment(buyerId, productId, quantity);
 
         // 2. QR 코드 생성

@@ -17,7 +17,7 @@ public class LoginMySqlRepository {
 
     public UserInfoResponse findUserInfo(String userId) {
         String userInfoSql = "SELECT name, email, social_login_platform FROM users WHERE user_id = ?";
-        String martsSql = "SELECT store_id FROM storeEmployee WHERE user_id = ?";
+        String martsSql = "SELECT store_id FROM store_employee WHERE user_id = ?";
 
         return jdbcTemplate.queryForObject(userInfoSql, (rs, rowNum) -> {
             String name = rs.getString("name");

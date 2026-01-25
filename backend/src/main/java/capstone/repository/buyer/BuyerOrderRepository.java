@@ -32,9 +32,9 @@ public class BuyerOrderRepository {
     public List<BuyerOrderCompleteResponse> getOrderComplete(Long orderId) {
         String sql = "SELECT p.product_img_src, p.product_name, oi.quantity, p.price, " +
                 "(p.price * oi.quantity) AS total_price, q.valid_until, oi.status " +
-                "FROM orderItems oi " +
+                "FROM order_items oi " +
                 "JOIN products p ON oi.product_id = p.product_id " +
-                "JOIN qrCodes q ON oi.order_id = q.order_id " +
+                "JOIN qr_codes q ON oi.order_id = q.order_id " +
                 "WHERE oi.order_id = ?";
 
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(BuyerOrderCompleteResponse.class), orderId);
@@ -46,9 +46,9 @@ public class BuyerOrderRepository {
     public List<BuyerOrderCompleteResponse> findOrdersByIds(List<Long> orderIds) {
         String sql = "SELECT oi.order_id, p.product_img_src, p.product_name, oi.quantity, p.price, " +
                 "oi.total_price, q.valid_until, oi.status " +
-                "FROM orderItems oi " +
+                "FROM order_items oi " +
                 "JOIN products p ON oi.product_id = p.product_id " +
-                "JOIN qrCodes q ON oi.order_id = q.order_id " +
+                "JOIN qr_codes q ON oi.order_id = q.order_id " +
                 "WHERE oi.order_id IN (:orderIds)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -67,10 +67,10 @@ public class BuyerOrderRepository {
                 "    oi.order_id, oi.quantity, oi.total_price, oi.status, " +
                 "    q.valid_until, " +
                 "    s.store_id, s.name, s.address " +
-                "FROM orderItems oi " +
+                "FROM order_items oi " +
                 "JOIN products p ON oi.product_id = p.product_id " +
                 "JOIN stores s ON oi.seller_id = s.store_id " +
-                "JOIN qrCodes q ON oi.order_id = q.order_id " +
+                "JOIN qr_codes q ON oi.order_id = q.order_id " +
                 "WHERE oi.buyer_id = ? " +
                 "AND oi.status IN (1, 2, 3)";
 
@@ -107,8 +107,8 @@ public class BuyerOrderRepository {
      * */
     public Optional<BuyerQrcodeExtensionResponse> findQrCodeDetailsByOrderId(Long orderId) {
         String sql = "SELECT q.count, q.valid_until, s.closing_time, s.opening_time " +
-                "FROM qrCodes q " +
-                "JOIN orderItems oi ON q.order_id = oi.order_id " +
+                "FROM qr_codes q " +
+                "JOIN order_items oi ON q.order_id = oi.order_id " +
                 "JOIN stores s ON oi.seller_id = s.store_id " +
                 "WHERE q.order_id = ?";
         try {
@@ -136,7 +136,7 @@ public class BuyerOrderRepository {
 
     // 구매가능시간 연장
     public int updateQrCode(Long orderId, LocalDateTime newValidUntil, int newCount) {
-        String sql = "UPDATE qrCodes SET valid_until = ?, count = ? WHERE order_id = ?";
+        String sql = "UPDATE qr_codes SET valid_until = ?, count = ? WHERE order_id = ?";
         return jdbcTemplate.update(sql, newValidUntil, newCount, orderId);
     }
 
@@ -145,7 +145,7 @@ public class BuyerOrderRepository {
      */
     // 주문 ID로 상품 ID와 수량을 조회
     public Optional<BuyerOrderCancelInfoResponse> findOrderInfoById(Long orderId) {
-        String sql = "SELECT product_id, quantity FROM orderItems WHERE order_id = ?";
+        String sql = "SELECT product_id, quantity FROM order_items WHERE order_id = ?";
         try {
             BuyerOrderCancelInfoResponse orderInfo = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new BuyerOrderCancelInfoResponse(
                     rs.getLong("product_id"),
@@ -165,19 +165,19 @@ public class BuyerOrderRepository {
 
     // 주문 ID에 해당하는 QR 코드를 삭제
     public int deleteQrCodeByOrderId(Long orderId) {
-        String sql = "DELETE FROM qrCodes WHERE order_id = ?";
+        String sql = "DELETE FROM qr_codes WHERE order_id = ?";
         return jdbcTemplate.update(sql, orderId);
     }
 
     // 주문 아이템의 상태를 변경
-    public int updateOrderItemStatus(Long orderId, int status) {
-        String sql = "UPDATE orderItems SET status = ? WHERE order_id = ?";
+    public int updateorder_itemstatus(Long orderId, int status) {
+        String sql = "UPDATE order_items SET status = ? WHERE order_id = ?";
         return jdbcTemplate.update(sql, status, orderId);
     }
 
     // 특정 상품에 대해 활성 상태(수령 전)인 주문의 개수를 카운트
     public int countActiveOrdersByProductId(Long productId) {
-        String sql = "SELECT COUNT(*) FROM orderItems WHERE product_id = ? AND status IN (1, 2, 3)";
+        String sql = "SELECT COUNT(*) FROM order_items WHERE product_id = ? AND status IN (1, 2, 3)";
         return jdbcTemplate.queryForObject(sql, Integer.class, productId);
     }
 
@@ -195,7 +195,7 @@ public class BuyerOrderRepository {
                 "    p.product_id, p.product_img_src, p.product_name, " +
                 "    oi.order_id, oi.quantity, oi.total_price, oi.status, " +
                 "    s.store_id, s.name, s.address, s.is_deleted " +
-                "FROM orderItems oi " +
+                "FROM order_items oi " +
                 "JOIN products p ON oi.product_id = p.product_id " +
                 "JOIN stores s ON oi.seller_id = s.store_id " +
                 "WHERE oi.buyer_id = ? " +
@@ -229,7 +229,7 @@ public class BuyerOrderRepository {
                 "    oi.quantity, oi.total_price, s.store_id, s.name AS storeName, s.address AS storeAddress, s.is_deleted AS storeIsDeleted, " +
                 "    CASE WHEN r.review_id IS NOT NULL THEN TRUE ELSE FALSE END AS isReviewed, " +
                 "    r.created_at AS reviewCreatedAt " +
-                "FROM orderItems oi " +
+                "FROM order_items oi " +
                 "JOIN products p ON oi.product_id = p.product_id " +
                 "JOIN stores s ON oi.seller_id = s.store_id " +
                 "LEFT JOIN reviews r ON oi.order_id = r.order_id " +
@@ -265,8 +265,8 @@ public class BuyerOrderRepository {
      * */
     public List<Long> findExpiredOrderIds(LocalDateTime currentTime) {
         String sql = "SELECT oi.order_id " +
-                "FROM orderItems oi " +
-                "JOIN qrCodes q ON oi.order_id = q.order_id " +
+                "FROM order_items oi " +
+                "JOIN qr_codes q ON oi.order_id = q.order_id " +
                 "WHERE q.valid_until < ? " +
                 "AND oi.status IN (1, 2, 3)";
 

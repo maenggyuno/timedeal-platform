@@ -22,7 +22,7 @@ public class SellerReviewQueryRepository {
           r.content    AS text,
           r.created_at AS createdAt
         FROM reviews r
-        JOIN `orderItems` oi ON oi.order_id = r.order_id
+        JOIN `order_items` oi ON oi.order_id = r.order_id
         WHERE oi.seller_id = ?
         ORDER BY r.created_at DESC
         """;
@@ -43,7 +43,7 @@ public class SellerReviewQueryRepository {
         COUNT(*)                                                        AS cntAll,
         SUM(r.created_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH))          AS cnt3m
         FROM reviews r
-        JOIN `orderItems` oi ON oi.order_id = r.order_id
+        JOIN `order_items` oi ON oi.order_id = r.order_id
         WHERE oi.seller_id = ?
     """;
     return jdbc.queryForObject(sql, (rs, i) -> new SellerReviewSummaryDto(

@@ -9,5 +9,5 @@ public record SellerReservationDto(
   @JsonProperty("quantity") Integer quantity,
   @JsonProperty("user_name") String userName,
   @JsonProperty("valid_until") String validUntilIso, // ISO 문자열
-  @JsonProperty("count") Integer count // qrCodes.count = 분
+  @JsonProperty("count") Integer count // qr_codes.count = 분
 ) {}

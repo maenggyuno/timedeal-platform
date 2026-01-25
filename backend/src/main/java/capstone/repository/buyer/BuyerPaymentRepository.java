@@ -30,7 +30,7 @@ public class BuyerPaymentRepository {
         }
 
         // 2. 주문서 생성
-        String insertOrderSql = "INSERT INTO orderItems (product_id, quantity, seller_id, buyer_id, status, total_price) " +
+        String insertOrderSql = "INSERT INTO order_items (product_id, quantity, seller_id, buyer_id, status, total_price) " +
                 "SELECT ?, ?, p.store_id, ?, 1, ? * p.price " +
                 "FROM products p " +
                 "WHERE p.product_id = ?";
@@ -70,7 +70,7 @@ public class BuyerPaymentRepository {
         }
 
         // 2. 주문서 생성 (DB에 저장)
-        String insertOrderSql = "INSERT INTO orderItems (product_id, quantity, total_price, seller_id, buyer_id, status) " +
+        String insertOrderSql = "INSERT INTO order_items (product_id, quantity, total_price, seller_id, buyer_id, status) " +
                 "SELECT ?, ?, ?, p.store_id, ?, ? " +
                 "FROM products p " +
                 "WHERE p.product_id = ?";

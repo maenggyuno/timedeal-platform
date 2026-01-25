@@ -42,7 +42,7 @@ public class QrCodeRepository {
      */
     public void basicCreateQrCode(String uuid, Long orderId) {
         String sql =
-                "INSERT INTO qrCodes (uuid, order_id, valid_until) " +
+                "INSERT INTO qr_codes (uuid, order_id, valid_until) " +
                         "VALUES (?, ?, CONVERT_TZ(DATE_ADD(NOW(), INTERVAL 1 HOUR), 'UTC', 'Asia/Seoul'))";
         jdbcTemplate.update(sql, uuid, orderId);
     }
@@ -53,10 +53,10 @@ public class QrCodeRepository {
      */
     public void createReservedQrCode(String uuid, Long orderId) {
         String sql =
-                "INSERT INTO qrCodes (uuid, order_id, valid_until) " +
+                "INSERT INTO qr_codes (uuid, order_id, valid_until) " +
                         "SELECT ?, ?, CONVERT_TZ(DATE_SUB(TIMESTAMP(CURDATE(), s.closing_time), INTERVAL 1 HOUR), 'UTC', 'Asia/Seoul') " +
                         "FROM stores s " +
-                        "JOIN orderItems oi ON s.store_id = oi.seller_id " +
+                        "JOIN order_items oi ON s.store_id = oi.seller_id " +
                         "WHERE oi.order_id = ?";
         jdbcTemplate.update(sql, uuid, orderId, orderId);
     }
@@ -67,7 +67,7 @@ public class QrCodeRepository {
     public Optional<QrCode> findByOrderIdAndValidUntilAfter(Long orderId, LocalDateTime currentTime) {
         String sql =
                 "SELECT qr_id, uuid, valid_until, order_id " +
-                        "FROM qrCodes WHERE order_id = ? AND valid_until > ?";
+                        "FROM qr_codes WHERE order_id = ? AND valid_until > ?";
         try {
             QrCode qrCode = jdbcTemplate.queryForObject(sql, QR_ROW_MAPPER, orderId, currentTime);
             return Optional.ofNullable(qrCode);
@@ -82,7 +82,7 @@ public class QrCodeRepository {
     public Optional<QrCode> findByOrderIdAndUuid(Long orderId, String uuid) {
         String sql =
                 "SELECT qr_id, uuid, valid_until, order_id " +
-                        "FROM qrCodes WHERE order_id = ? AND uuid = ?";
+                        "FROM qr_codes WHERE order_id = ? AND uuid = ?";
         try {
             QrCode qr = jdbcTemplate.queryForObject(sql, QR_ROW_MAPPER, orderId, uuid);
             return Optional.ofNullable(qr);
@@ -98,7 +98,7 @@ public class QrCodeRepository {
     public Optional<QrCode> findValidByOrderIdAndUuid(Long orderId, String uuid, LocalDateTime now) {
         String sql =
                 "SELECT qr_id, uuid, valid_until, order_id " +
-                        "FROM qrCodes WHERE order_id = ? AND uuid = ? AND valid_until > ?";
+                        "FROM qr_codes WHERE order_id = ? AND uuid = ? AND valid_until > ?";
         try {
             QrCode qr = jdbcTemplate.queryForObject(sql, QR_ROW_MAPPER, orderId, uuid, now);
             return Optional.ofNullable(qr);
@@ -112,7 +112,7 @@ public class QrCodeRepository {
      * - 체크인 완료 or 예약 취소 시 호출
      */
     public void deleteByOrderId(Long orderId) {
-        String sql = "DELETE FROM qrCodes WHERE order_id = ?";
+        String sql = "DELETE FROM qr_codes WHERE order_id = ?";
         jdbcTemplate.update(sql, orderId);
     }
 
@@ -121,7 +121,7 @@ public class QrCodeRepository {
      * @return 삭제된 row 수
      */
     public int deleteByValidUntilBefore(LocalDateTime time) {
-        String sql = "DELETE FROM qrCodes WHERE valid_until <= ?";
+        String sql = "DELETE FROM qr_codes WHERE valid_until <= ?";
         return jdbcTemplate.update(sql, time);
     }
 
@@ -129,7 +129,7 @@ public class QrCodeRepository {
      * (옵션) 화면용: orderId 로 valid_until 하나만 가져오기
      */
     public Optional<LocalDateTime> findValidUntilByOrderId(Long orderId) {
-        String sql = "SELECT valid_until FROM qrCodes WHERE order_id = ? ORDER BY qr_id DESC LIMIT 1";
+        String sql = "SELECT valid_until FROM qr_codes WHERE order_id = ? ORDER BY qr_id DESC LIMIT 1";
         try {
             LocalDateTime vt = jdbcTemplate.queryForObject(
                     sql,
@@ -146,7 +146,7 @@ public class QrCodeRepository {
     public Optional<QrCode> findLatestByOrderId(Long orderId) {
         String sql =
                 "SELECT qr_id, uuid, valid_until, order_id, /* count 컬럼이 없다면 이 부분 제거 */ count " +
-                        "FROM qrCodes WHERE order_id = ? ORDER BY valid_until DESC LIMIT 1";
+                        "FROM qr_codes WHERE order_id = ? ORDER BY valid_until DESC LIMIT 1";
         try {
             QrCode qr = jdbcTemplate.queryForObject(sql, QR_ROW_MAPPER, orderId);
             return Optional.ofNullable(qr);
@@ -166,7 +166,7 @@ public class QrCodeRepository {
                 "    oi.total_price AS totalPrice, " +
                 "    oi.status AS status " +
                 "FROM " +
-                "    orderItems oi " +
+                "    order_items oi " +
                 "JOIN " +
                 "    products p ON oi.product_id = p.product_id " +
                 "WHERE " +

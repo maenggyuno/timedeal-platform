@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "qrCodes")
+@Table(name = "qr_codes")
 @Getter
 @Setter
 public class QrCode {

@@ -10,5 +10,5 @@ public interface ReservationRow {
   Integer getQuantity();
   String getUserName();
   Timestamp getValidUntil();
-  Integer getQrCount(); // qrCodes.count (분)
+  Integer getQrCount(); // qr_codes.count (분)
 }

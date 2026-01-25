@@ -67,7 +67,7 @@ public class BuyerProductRepository {
                     "JOIN stores s ON p.store_id = s.store_id " +
                     "LEFT JOIN follows f ON s.store_id = f.store_id " +
                     "LEFT JOIN follows f_user ON s.store_id = f_user.store_id AND f_user.user_id = ? " +
-                    "LEFT JOIN orderItems oi ON s.store_id = oi.seller_id " +
+                    "LEFT JOIN order_items oi ON s.store_id = oi.seller_id " +
                     "LEFT JOIN reviews r ON oi.order_id = r.order_id " +
                     "WHERE p.product_id = ? " +
                     "GROUP BY s.store_id, s.name, s.address, p.product_id, f_user.user_id";
@@ -111,7 +111,7 @@ public class BuyerProductRepository {
                     "FROM products p " +
                     "JOIN stores s ON p.store_id = s.store_id " +
                     "LEFT JOIN follows f ON s.store_id = f.store_id " +
-                    "LEFT JOIN orderItems oi ON s.store_id = oi.seller_id " +
+                    "LEFT JOIN order_items oi ON s.store_id = oi.seller_id " +
                     "LEFT JOIN reviews r ON oi.order_id = r.order_id " +
                     "WHERE p.product_id = ? " +
                     "GROUP BY s.store_id, s.name, s.address, p.product_id";

@@ -17,16 +17,16 @@ public interface SellerDashboardRepository extends Repository<Store, Long> {
         SELECT
           oi.order_id AS orderId, p.product_id AS productId, p.product_name AS productName,
           oi.quantity AS quantity, u.name AS userName, qx.valid_until AS validUntil
-        FROM orderItems oi
+        FROM order_items oi
         JOIN products p ON p.product_id = oi.product_id
         JOIN (
-            SELECT q.order_id, MAX(q.valid_until) AS valid_until FROM qrCodes q GROUP BY q.order_id
+            SELECT q.order_id, MAX(q.valid_until) AS valid_until FROM qr_codes q GROUP BY q.order_id
         ) qx ON qx.order_id = oi.order_id
         LEFT JOIN users u ON u.user_id = oi.buyer_id
         WHERE p.store_id = :martId AND oi.status = 3 -- 변경된 부분
         ORDER BY qx.valid_until ASC
     """, countQuery = """
-        SELECT COUNT(oi.order_id) FROM orderItems oi
+        SELECT COUNT(oi.order_id) FROM order_items oi
         JOIN products p ON p.product_id = oi.product_id
         WHERE p.store_id = :martId AND oi.status = 3 -- 변경된 부분
     """, nativeQuery = true)
@@ -37,16 +37,16 @@ public interface SellerDashboardRepository extends Repository<Store, Long> {
         SELECT
           oi.order_id AS orderId, p.product_id AS productId, p.product_name AS productName,
           oi.quantity AS quantity, u.name AS userName, qx.valid_until AS validUntil
-        FROM orderItems oi
+        FROM order_items oi
         JOIN products p ON p.product_id = oi.product_id
         JOIN (
-            SELECT q.order_id, MAX(q.valid_until) AS valid_until FROM qrCodes q GROUP BY q.order_id
+            SELECT q.order_id, MAX(q.valid_until) AS valid_until FROM qr_codes q GROUP BY q.order_id
         ) qx ON qx.order_id = oi.order_id
         LEFT JOIN users u ON u.user_id = oi.buyer_id
         WHERE p.store_id = :martId AND oi.status IN (1, 2) -- 변경된 부분
         ORDER BY qx.valid_until ASC
     """, countQuery = """
-        SELECT COUNT(oi.order_id) FROM orderItems oi
+        SELECT COUNT(oi.order_id) FROM order_items oi
         JOIN products p ON p.product_id = oi.product_id
         WHERE p.store_id = :martId AND oi.status IN (1, 2) -- 변경된 부분
     """, nativeQuery = true)
@@ -57,13 +57,13 @@ public interface SellerDashboardRepository extends Repository<Store, Long> {
         SELECT
           oi.order_id AS orderId, oi.product_id AS productId, p.product_name AS productName,
           oi.quantity AS quantity, oi.sold_at AS soldAt, u.name as userName
-        FROM orderItems oi
+        FROM order_items oi
         JOIN products p ON p.product_id = oi.product_id
         LEFT JOIN users u ON u.user_id = oi.buyer_id
         WHERE p.store_id = :martId AND oi.status = 4
         ORDER BY oi.sold_at DESC
     """, countQuery = """
-        SELECT COUNT(oi.order_id) FROM orderItems oi
+        SELECT COUNT(oi.order_id) FROM order_items oi
         JOIN products p ON p.product_id = oi.product_id
         WHERE p.store_id = :martId AND oi.status = 4
     """, nativeQuery = true)

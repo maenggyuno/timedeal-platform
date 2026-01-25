@@ -66,7 +66,7 @@ public class BuyerOrderService {
 
         LocalTime openingTime = qrDetails.getOpeningTime();
         LocalTime closingTime = qrDetails.getClosingTime();
-        LocalDateTime currentValidUntil = qrDetails.getValidUntil(); 
+        LocalDateTime currentValidUntil = qrDetails.getValidUntil();
         LocalDateTime nowKST = LocalDateTime.now(KST);
 
         // 24시간 영업점 확인
@@ -122,14 +122,14 @@ public class BuyerOrderService {
         BuyerOrderCancelInfoResponse orderInfo = buyerOrderRepository.findOrderInfoById(orderId)
                 .orElseThrow(() -> new RuntimeException("주문 정보를 찾을 수 없습니다. orderId: " + orderId));
 
-        // 2. products quantity 복구 (products.quantity += orderItems.quantity)
+        // 2. products quantity 복구 (products.quantity += order_items.quantity)
         buyerOrderRepository.increaseProductQuantity(orderInfo.getProductId(), orderInfo.getQuantity());
 
-        // 3. qrCodes 레코드를 제거
+        // 3. qr_codes 레코드를 제거
         buyerOrderRepository.deleteQrCodeByOrderId(orderId);
 
-        // 4. orderItems.status 판매취소로 변경
-        buyerOrderRepository.updateOrderItemStatus(orderId, 0);
+        // 4. order_items.status 판매취소로 변경
+        buyerOrderRepository.updateorder_itemstatus(orderId, 0);
 
         // 5. 다른 진행 중인 주문이 있는지 확인
         int activeOrderCount = buyerOrderRepository.countActiveOrdersByProductId(orderInfo.getProductId());

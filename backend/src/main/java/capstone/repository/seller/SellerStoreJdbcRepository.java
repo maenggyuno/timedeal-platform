@@ -17,18 +17,18 @@ public class SellerStoreJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public void save(StoreEmployee storeEmployee) {
-        String sql = "INSERT INTO storeEmployee (store_id, user_id, authority) VALUES (?, ?, ?)";
+    public void save(StoreEmployee store_employee) {
+        String sql = "INSERT INTO store_employee (store_id, user_id, authority) VALUES (?, ?, ?)";
 
         jdbcTemplate.update(sql,
-                storeEmployee.getId().getStoreId(),
-                storeEmployee.getId().getUserId(),
-                storeEmployee.getAuthority()
+                store_employee.getId().getStoreId(),
+                store_employee.getId().getUserId(),
+                store_employee.getAuthority()
         );
     }
 
     public List<StoreEmployee> findById_UserId(Long userId) {
-        String sql = "SELECT store_id, user_id, authority FROM storeEmployee WHERE user_id = ?";
+        String sql = "SELECT store_id, user_id, authority FROM store_employee WHERE user_id = ?";
 
         return jdbcTemplate.query(sql, new RowMapper<StoreEmployee>() {
             @Override

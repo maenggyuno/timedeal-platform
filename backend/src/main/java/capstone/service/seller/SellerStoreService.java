@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 public class SellerStoreService {
 
     private final SellerStoreRepository sellerStoreRepository;
-    private final SellerStoreJdbcRepository storeEmployeeRepository;
+    private final SellerStoreJdbcRepository store_employeeRepository;
 
     @Transactional(readOnly = true)
     public List<SellerDashboardResponse> findAll(Long userId) {
-        List<StoreEmployee> storeEmployees = storeEmployeeRepository.findById_UserId(userId);
-        List<Long> storeIds = storeEmployees.stream()
+        List<StoreEmployee> store_employees = store_employeeRepository.findById_UserId(userId);
+        List<Long> storeIds = store_employees.stream()
                 .map(se -> se.getId().getStoreId())
                 .collect(Collectors.toList());
         if (storeIds.isEmpty()) {
@@ -40,7 +40,7 @@ public class SellerStoreService {
         Map<Long, Store> storeMap = stores.stream()
                 .collect(Collectors.toMap(Store::getStoreId, store -> store));
 
-        return storeEmployees.stream()
+        return store_employees.stream()
                 .map(se -> {
                     Store store = storeMap.get(se.getId().getStoreId());
                     if (store == null) return null;
@@ -60,13 +60,13 @@ public class SellerStoreService {
         Store storeToSave = request.toEntity(userId);
         Store createdStore = sellerStoreRepository.save(storeToSave);
 
-        StoreEmployeeId storeEmployeeId = new StoreEmployeeId(createdStore.getStoreId(), userId);
+        StoreEmployeeId store_employeeId = new StoreEmployeeId(createdStore.getStoreId(), userId);
         StoreEmployee ownerAsEmployee = StoreEmployee.builder()
-                .id(storeEmployeeId)
+                .id(store_employeeId)
                 .authority(1)
                 .build();
 
-        storeEmployeeRepository.save(ownerAsEmployee);
+        store_employeeRepository.save(ownerAsEmployee);
 
         return createdStore;
     }

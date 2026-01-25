@@ -12,7 +12,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "storeEmployee")
+@Table(name = "store_employee")
 public class StoreEmployee {
 
     @EmbeddedId

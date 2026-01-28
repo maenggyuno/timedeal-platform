@@ -1,0 +1,10 @@
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+docker-compose-local.yml
+# 중요: 비밀 설정 파일 제외!
+src/main/resources/application.properties
+src/main/resources/application-prod.properties
+
+.env

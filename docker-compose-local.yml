@@ -1,0 +1,60 @@
+#개발용 도커 mysql(rds 아님)
+version: '3.8'
+
+services:
+  # 1. 로컬 DB
+  local-db:
+    image: mysql:8.0
+    container_name: timedeal-local-db
+    environment:
+      # (1) 루트 비밀번호 (필수) -> .env에서 가져옴
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+
+      # (2) 초기 데이터베이스 이름
+      MYSQL_DATABASE: timedeal_db
+
+      # 👇 [여기!] 이 두 줄을 넣어야 'timedeal_dev' 계정이 만들어집니다!
+      MYSQL_USER: timedeal_dev
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    networks:
+      - timedeal-net
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # 2. 백엔드
+  backend:
+    build: ./backend
+    container_name: timedeal-backend
+    environment:
+      # 서비스 이름(local-db)으로 접속
+      SPRING_DATASOURCE_URL: jdbc:mysql://local-db:3306/timedeal_db?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
+
+      # 👇 이제 DB 컨테이너가 이 유저를 만들었으니, 접속 가능합니다!
+      SPRING_DATASOURCE_USERNAME: timedeal_dev
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - local-db
+    networks:
+      - timedeal-net
+
+  # 3. 프론트엔드 (변경 없음)
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_URL: http://localhost:8080/api
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - timedeal-net
+
+networks:
+  timedeal-net:
+    driver: bridge

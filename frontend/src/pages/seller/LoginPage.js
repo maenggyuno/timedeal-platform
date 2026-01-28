@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../styles/seller/LoginPage.module.css'; 
+import styles from '../../styles/seller/LoginPage.module.css';
 import Header from '../../components/seller/Header';
 import Footer from '../../components/seller/Footer';
 
@@ -7,12 +7,19 @@ const LoginPage = () => {
   // 백엔드(Spring)의 소셜 로그인 URL을 정의
   // const GOOGLE_LOGIN_URL = 'http://localhost:8080/oauth2/authorization/google';
   // const NAVER_LOGIN_URL = 'http://localhost:8080/oauth2/authorization/naver';
-  const GOOGLE_LOGIN_URL = '/oauth2/authorization/google';
-  const NAVER_LOGIN_URL = '/oauth2/authorization/naver';
+  // const GOOGLE_LOGIN_URL = '/oauth2/authorization/google';
+  // const NAVER_LOGIN_URL = '/oauth2/authorization/naver';
+
+  // 환경 변수에서 베이스 URL을 가져옵니다.
+  // 없으면 기본값으로 상대 경로를 사용하도록 설정합니다.
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+  const GOOGLE_LOGIN_URL = `${BACKEND_URL}/oauth2/authorization/google`;
+  const NAVER_LOGIN_URL = `${BACKEND_URL}/oauth2/authorization/naver`;
 
   const handleSocialLogin = (provider) => {
     localStorage.setItem('redirectPathAfterLogin', '/seller/dashboard');
-    
+
     const url = provider === 'google' ? GOOGLE_LOGIN_URL : NAVER_LOGIN_URL;
     window.location.href = url;
   };

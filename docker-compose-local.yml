@@ -26,6 +26,8 @@ services:
   backend:
     build: ./backend
     container_name: timedeal-backend
+    env_file:
+      - .env
     environment:
       # 서비스 이름(local-db)으로 접속
       SPRING_DATASOURCE_URL: jdbc:mysql://local-db:3306/timedeal_db?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
@@ -39,6 +41,8 @@ services:
       - "8080:8080"
     depends_on:
       - local-db
+    # 👇 [해결책 3] DB가 늦게 떠서 연결에 실패하더라도 성공할 때까지 자동으로 다시 시작합니다.
+    restart: on-failure
     networks:
       - timedeal-net
 
@@ -47,7 +51,10 @@ services:
     build:
       context: ./frontend
       args:
-        REACT_APP_API_URL: http://localhost:3000/api
+        - REACT_APP_API_URL=http://localhost:3000/api
+        - REACT_APP_SGIS_CLIENT_KEY=${REACT_APP_SGIS_CLIENT_KEY}
+        - REACT_APP_SGIS_SECRET=${REACT_APP_SGIS_SECRET}
+        - REACT_APP_BACKEND_URL=http://localhost:8080
     ports:
       - "3000:80"
     depends_on:

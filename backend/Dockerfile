@@ -3,8 +3,11 @@
 # ------------------------------------------------
 # 1. 빌드(Build) 환경
 # ------------------------------------------------
-FROM openjdk:21-jdk-slim AS builder
+# 가장 표준적이고 가벼운 JDK 21 이미지입니다.
+FROM amazoncorretto:21-al2023 AS builder
 WORKDIR /app
+
+RUN dnf install -y findutils
 
 # Gradle 관련 파일만 먼저 복사
 COPY gradlew ./
@@ -30,7 +33,7 @@ RUN ./gradlew build -x test
 # ------------------------------------------------
 # 2. 실행(Runtime) 환경
 # ------------------------------------------------
-FROM openjdk:21-slim
+FROM amazoncorretto:21-al2023
 WORKDIR /app
 
 # 빌드 환경에서 생성된 .jar 파일만 복사

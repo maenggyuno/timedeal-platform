@@ -59,6 +59,3 @@ out/
 # 로컬 DB (선택 - 실제 DB는 안 씀)
 data/
 *.db
-
-application-login.properties
-application.properties

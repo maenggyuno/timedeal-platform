@@ -37,10 +37,13 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 # 환경 변수(.env)를 Java 시스템 프로퍼티(-D)로 주입받아 앱을 실행
-ENTRYPOINT java \
-            -Dfrontend.url=${FRONTEND_URL} \
-            -Dcookie.secure=${COOKIE_SECURE} \
-            -Dspring.datasource.url=${DB_URL} \
-            -Dspring.datasource.username=${DB_USERNAME} \
-            -Dspring.datasource.password=${DB_PASSWORD} \
-            -jar app.jar
+#ENTRYPOINT java \
+#            -Dfrontend.url=${FRONTEND_URL} \
+#            -Dcookie.secure=${COOKIE_SECURE} \
+#            -Dspring.datasource.url=${DB_URL} \
+#            -Dspring.datasource.username=${DB_USERNAME} \
+#            -Dspring.datasource.password=${DB_PASSWORD} \
+#            -jar app.jar
+
+# 환경 변수 매핑을 여기서 하지 말고, 실행 명령어만 심플하게!
+ENTRYPOINT ["java", "-jar", "app.jar"]

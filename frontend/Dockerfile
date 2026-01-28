@@ -4,6 +4,12 @@ COPY package.json ./
 COPY package-lock.json ./
 RUN npm install
 COPY . .
+
+# [추가된 부분] 빌드할 때 밖에서 변수를 받아라!
+ARG REACT_APP_API_URL
+# 받은 변수를 리액트 빌드 명령어가 쓸 수 있게 환경변수로 등록
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 RUN npm run build
 
 FROM nginx:stable-alpine

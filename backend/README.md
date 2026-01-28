@@ -241,9 +241,17 @@ Password: 깃허브 Personal Access Token(PAT) 입력 (일반 비밀번호는 �
 rm -rf build
 
 # 2. 프로젝트 빌드 (테스트 제외 시 -x test 옵션 추가)
-./gradlew build -x test
+sudo ./gradlew clean build -x test
 ```
 
+```bash
+# 스왑 메모리 활성화
+sudo swapon /swapfile
+
+# 잘 켜졌는지 확인 (Swap 부분에 숫자가 보여야 함)
+free -h
+```
+`
 #### 4-3. 서버 실행
 ```bash
 java -jar build/libs/timedeal-platform-backend-0.0.1-SNAPSHOT.jar

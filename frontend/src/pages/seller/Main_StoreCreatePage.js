@@ -26,7 +26,7 @@ const Main_StoreCreatePage = () => {
   const detailAddressRef = useRef(null);
   const tokenCache = useRef({ token: null, exp: 0 });
 
-  const SGIS_KEY = process.env.REACT_APP_SGIS_KEY;
+  const SGIS_KEY = process.env.REACT_APP_SGIS_CLIENT_KEY;
   const SGIS_SECRET = process.env.REACT_APP_SGIS_SECRET;
   //프록시 cors 해결을 위한 상대경로 설정 세팅 로컬은 Proxy(상대 경로)를 태우고, 배포는 실제 도메인을 사용하도록 분기
   const BASE_URL = process.env.REACT_APP_API_BASE_URL || '';

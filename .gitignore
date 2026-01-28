@@ -11,3 +11,6 @@ desktop.ini
 
 # 3. 로그 파일
 *.log
+
+#최상단 폴더 .env 꼭 추가
+.env

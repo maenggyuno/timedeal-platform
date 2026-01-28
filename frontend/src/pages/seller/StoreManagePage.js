@@ -46,7 +46,7 @@ const StoreInfoTab = ({storeId}) => {
   const [detailAddress, setDetailAddress] = useState('');
   const detailAddressRef = useRef(null);
 
-  const SGIS_KEY = process.env.REACT_APP_SGIS_KEY;
+  const SGIS_KEY = process.env.REACT_APP_SGIS_CLIENT_KEY;
   const SGIS_SECRET = process.env.REACT_APP_SGIS_SECRET;
   const tokenCache = useRef({token: null, exp: 0});
 

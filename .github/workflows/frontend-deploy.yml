@@ -30,7 +30,7 @@ jobs:
                   touch .env
 
                   # 1. 백엔드 API 주소 (운영 서버 IP)
-                  echo "REACT_APP_API_URL=http://3.36.179.239/api" >> .env
+                  echo "REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }}" >> .env
 
                   # 2. 통계청(SGIS) 주소
                   echo "REACT_APP_API_BASE_URL=https://sgisapi.kostat.go.kr" >> .env

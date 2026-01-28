@@ -20,7 +20,7 @@ const TossCheckout = () => {
 
         const customerKey = `user_${new Date().getTime()}`;
 
-        loadTossPayments(process.env.REACT_APP_TOSS_PAYMENTS_KEY)
+        loadTossPayments(process.env.REACT_APP_TOSS_PAYMENTS_CLIENT_KEY)
             .then(tossPayments => {
                 const payment = tossPayments.payment({ customerKey });
                 payment.requestPayment({

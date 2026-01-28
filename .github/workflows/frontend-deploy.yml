@@ -1,0 +1,73 @@
+# .github/workflows/frontend-backend-deploy.disabled.yml (Frontend)
+name: Frontend CI/CD
+
+on:
+    push:
+        branches: [ "main" ]
+        paths:
+            - 'frontend/**'
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@v2
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            # 👇 [새로 추가된 부분] 빌드 전에 .env 파일을 생성합니다!
+            - name: Create .env file for Frontend
+              run: |
+                  # frontend 폴더로 이동 (중요!)
+                  cd frontend
+
+                  # .env 파일 생성 시작
+                  touch .env
+
+                  # 1. 백엔드 API 주소 (운영 서버 IP)
+                  echo "REACT_APP_API_URL=http://3.36.179.239/api" >> .env
+
+                  # 2. 통계청(SGIS) 주소
+                  echo "REACT_APP_API_BASE_URL=https://sgisapi.kostat.go.kr" >> .env
+
+                  # 3. 각종 시크릿 키 주입 (GitHub Secrets에서 가져옴)
+                  echo "REACT_APP_NAVER_MAPS_CLIENT_ID=${{ secrets.NAVER_MAPS_CLIENT_ID }}" >> .env
+                  echo "REACT_APP_TOSS_PAYMENTS_CLIENT_KEY=${{ secrets.REACT_APP_TOSS_PAYMENTS_CLIENT_KEY }}" >> .env
+                  echo "REACT_APP_SGIS_CLIENT_KEY=${{ secrets.REACT_APP_SGIS_CLIENT_KEY }}" >> .env
+                  #시간 상 배포 후 시크릿 키 백엔드로 프록시 기능 이전 예정
+                  echo "REACT_APP_SGIS_SECRET=${{ secrets.REACT_APP_SGIS_SECRET }}" >> .env
+
+                  # 파일 잘 만들어졌나 확인 (내용은 안 보여줌)
+                  echo ".env created successfully!"
+
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v4
+              with:
+                  context: ./frontend
+                  file: ./frontend/Dockerfile
+                  push: true
+                  tags: ${{ secrets.DOCKER_IMAGE_FRONTEND }}
+
+            - name: Deploy to EC2
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.EC2_HOST }}
+                  username: ${{ secrets.EC2_USERNAME }}
+                  key: ${{ secrets.EC2_SSH_KEY }}
+                  port: 22
+                  script: |
+                      cd /home/ubuntu/timedeal-platform
+
+                      # 1. 최신 프론트엔드 이미지를 pull
+                      docker-compose pull frontend
+
+                      # 2. 프론트엔드 컨테이너만 재시작
+                      docker-compose up -d --no-deps frontend
+
+                      # 3. 이미지 찌꺼기 정리
+                      docker image prune -f

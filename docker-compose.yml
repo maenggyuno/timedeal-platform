@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # 1. 백엔드 (이미지 가져오기)
+  backend:
+    # ⚠️ [핵심] 빌드(build) 삭제하고 이미지(image) 사용
+    image: ${DOCKER_IMAGE_BACKEND}
+    container_name: timedeal-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      # [DB 연결]
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+
+      # [기타 설정]
+      - FRONTEND_URL=${FRONTEND_URL}
+      - COOKIE_SECURE=${COOKIE_SECURE}
+      # 필요한 경우 AWS S3 키 등 추가
+    networks:
+      - timedeal-net
+
+  # 2. 프론트엔드 (이미지 가져오기)
+  frontend:
+    # ⚠️ [핵심] 여기서도 build, args 싹 지우고 이미지 사용!
+    image: ${DOCKER_IMAGE_FRONTEND}
+    container_name: timedeal-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - timedeal-net
+
+networks:
+  timedeal-net:
+    driver: bridge

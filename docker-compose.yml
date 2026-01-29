@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. 백엔드 (이미지 가져오기)
+  #  1. 백엔드 (이미지 가져오기)
   backend:
     # ⚠️ [핵심] 빌드(build) 삭제하고 이미지(image) 사용
     image: ${DOCKER_IMAGE_BACKEND}

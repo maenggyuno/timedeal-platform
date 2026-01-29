@@ -6,6 +6,7 @@ on:
         branches: [ "main" ]
         paths:
             - 'frontend/**'
+            - 'docker-compose.yml'
 
 jobs:
     build-and-deploy:
@@ -52,6 +53,31 @@ jobs:
                   file: ./frontend/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKER_IMAGE_FRONTEND }}
+
+            # [자동화] 폴더가 없으면 에러 나니까, 미리 생성해줍니다!
+            - name: Create directory on EC2
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.EC2_HOST }}
+                  username: ${{ secrets.EC2_USERNAME }}
+                  key: ${{ secrets.EC2_SSH_KEY }}
+                  port: 22
+                  script: |
+                  # -p 옵션: 폴더가 이미 있으면 무시하고, 없으면 만듭니다. (에러 안 남!)
+                    mkdir -p /home/ubuntu/timedeal-platform
+
+            # 👇 [새로 추가] docker-compose.yml 파일을 EC2로 복사 (전송)
+            - name: Copy Docker Compose file to EC2
+              uses: appleboy/scp-action@master
+              with:
+                  host: ${{ secrets.EC2_HOST }}
+                  username: ${{ secrets.EC2_USERNAME }}
+                  key: ${{ secrets.EC2_SSH_KEY }}
+                  port: 22
+                  # 내 깃허브 프로젝트 루트에 있는 docker-compose.yml 파일을
+                  source: "docker-compose.yml"
+                  # EC2의 이 폴더로 덮어씌워라!
+                  target: "/home/ubuntu/timedeal-platform"
 
             - name: Deploy to EC2
               uses: appleboy/ssh-action@master

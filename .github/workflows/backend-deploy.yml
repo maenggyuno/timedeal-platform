@@ -52,6 +52,9 @@ jobs:
           COOKIE_SECURE: ${{ secrets.COOKIE_SECURE }}
           GOOGLE_REDIRECT_URI: ${{ vars.GOOGLE_REDIRECT_URI }}
           NAVER_REDIRECT_URI: ${{ vars.NAVER_REDIRECT_URI }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
@@ -80,9 +83,13 @@ jobs:
             NAVER_MAPS_SECRET,
             GONGGONG_KEY,
             GOOGLE_REDIRECT_URI,
-            NAVER_REDIRECT_URI
+            NAVER_REDIRECT_URI,
+            DOCKERHUB_USERNAME,
+            DOCKERHUB_TOKEN
 
           script: |
+            # 로그인 명령어 추가 (맨 윗줄에!)
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             cd /home/ubuntu/timedeal-platform
 
             # 2. 기존 .env 삭제 후 새로 생성 (초기화)

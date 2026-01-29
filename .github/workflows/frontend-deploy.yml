@@ -64,7 +64,7 @@ jobs:
                   port: 22
                   script: |
                   # -p 옵션: 폴더가 이미 있으면 무시하고, 없으면 만듭니다. (에러 안 남!)
-                    mkdir -p /home/ubuntu/timedeal-platform
+                      mkdir -p /home/ubuntu/timedeal-platform
 
             # 👇 [새로 추가] docker-compose.yml 파일을 EC2로 복사 (전송)
             - name: Copy Docker Compose file to EC2

@@ -350,3 +350,93 @@ java -jar build/libs/timedeal-platform-backend-0.0.1-SNAPSHOT.jar
     ```bash
     java -jar -Dspring.profiles.active=prod app.jar
     ```
+
+## 🚀 CI/CD 및 배포 인프라 (Deployment Architecture)
+
+이 프로젝트는 **GitHub Actions**, **Docker**, **AWS EC2**를 활용하여 **자동화된 배포 파이프라인(CI/CD)**을 구축했습니다.
+로컬 개발 환경과 운영 환경(Production)의 차이를 이해하고, 보안을 고려하여 설계되었습니다.
+
+### 1. 전체 배포 흐름 (CI/CD Pipeline Flow)
+
+개발자가 코드를 `main` 브랜치에 `push`하면 다음과 같은 순서로 배포가 진행됩니다.
+
+**GitHub Actions (Runner)**
+1.  **Checkout:** 최신 소스 코드를 가져옵니다.
+2.  **Build:** `Dockerfile`을 기반으로 Spring Boot(백엔드)와 React(프론트엔드) 이미지를 빌드합니다.
+3.  **Login & Push:** Docker Hub(Private Repo)에 로그인 후, 빌드된 이미지를 업로드합니다.
+4.  **Connect EC2:** SSH Key를 이용해 AWS EC2 서버에 접속합니다.
+5.  **Copy Config:** `docker-compose.yml` (실행 설계도) 파일을 EC2로 전송(`scp`)합니다.
+6.  **Deploy:**
+    * EC2 내부에서 Private Docker Hub에 로그인합니다.
+    * GitHub Secrets를 기반으로 `.env` 파일을 동적으로 생성합니다. (보안 유지)
+    * `docker-compose pull`로 최신 이미지를 다운로드합니다.
+    * `docker-compose up -d`로 컨테이너를 재실행(무중단 배포 지향)합니다.
+    * `docker image prune`으로 불필요한 구버전 이미지를 정리합니다.
+
+### 2. 환경별 동작 방식 비교
+
+| 구분 | 로컬 개발 환경 (Local) | 운영 배포 환경 (Production EC2) |
+| :--- | :--- | :--- |
+| **실행 주체** | 개발자 PC (내 컴퓨터) | AWS EC2 (클라우드 서버) |
+| **실행 도구** | Docker Desktop | Docker Engine (Linux) |
+| **빌드 방식** | `docker-compose up --build`로 즉시 빌드 및 실행 | GitHub Actions가 빌드 후 '이미지'만 전달 |
+| **파일 관리** | 소스 코드 전체가 로컬에 존재 | **소스 코드 없음**, 오직 `docker-compose.yml`과 `.env`만 존재 |
+| **네트워크** | `localhost:3000` ↔ `localhost:8080` | `EC2_IP:80`(Nginx) ↔ `timedeal-backend:8080`(Docker Network) |
+
+### 3. 주요 파일 및 기술 설명
+
+* **Dockerfile:**
+    * 애플리케이션을 실행하기 위한 운영체제(JDK, Node.js)와 설정이 담긴 '요리 레시피'입니다.
+    * 백엔드는 `open-jdk-17`을 사용하여 JAR 파일을 실행하고, 프론트엔드는 `nginx`를 사용하여 정적 파일을 서빙합니다.
+
+* **docker-compose.yml:**
+    * 백엔드, 프론트엔드, DB 등 여러 컨테이너를 한 번에 관리하는 '통합 설계도'입니다.
+    * 배포 시 GitHub Actions가 이 파일을 EC2로 복사해주기 때문에, EC2에는 소스 코드 없이 이 파일 하나만 있으면 서버가 돌아갑니다.
+
+* **.github/workflows/\*.yml:**
+    * CI/CD 로봇에게 내리는 명령서입니다.
+    * `paths` 필터를 사용하여 백엔드 코드가 수정되면 백엔드만, 프론트엔드가 수정되면 프론트엔드만 효율적으로 배포합니다.
+
+### 4. 보안 및 Private Repository 전략
+
+* **Private Image:**
+    * 상용 서비스 수준의 보안을 위해 Docker Hub 리포지토리를 **Private**으로 설정했습니다.
+    * 배포 스크립트(`deploy.yml`) 내에 `docker login` 로직을 추가하여 권한이 있는 서버만 이미지를 받을 수 있게 했습니다.
+
+* **Environment Variables (.env):**
+    * DB 비밀번호, API Key 등 민감 정보는 코드에 포함하지 않습니다(`gitignore`).
+    * **프론트엔드:** 빌드 시점에 환경변수가 주입되어 이미지에 포함됩니다. (보안 취약점 방지를 위해 주요 Key는 백엔드로 위임 예정)
+    * **백엔드:** 배포 시점에 EC2 내부에서 `.env` 파일을 생성하여 컨테이너 실행 시 주입합니다.
+
+### 5. EC2 주요 명령어 (Maintenance)
+
+서버 유지보수를 위해 자주 사용하는 명령어입니다.
+
+```bash
+# 1. 서버 접속
+ssh -i "key.pem" ubuntu@EC2_IP
+
+# 2. 현재 실행 중인 컨테이너 확인
+docker ps
+
+# 3. 죽은 컨테이너 로그 확인 (에러 추적)
+docker logs <컨테이너ID>
+
+# 4. 강제 재배포 (캐시 문제 등 발생 시)
+# 이미지를 지우고 다시 받아옵니다.
+docker-compose down
+docker system prune -a -f
+docker-compose pull
+docker-compose up -d
+
+# 5. 디스크 용량 확인 및 스왑 메모리 확인
+df -h      # 디스크
+free -h    # 메모리 (Swap 확인)
+```
+
+###  6. 트러블 슈팅 가이드 (Memo)
+배포 중 Timeout 발생 시: EC2 사양 문제일 수 있으므로 Swap Memory가 활성화되어 있는지 확인한다.
+
+"No configuration file provided" 에러: docker-compose.yml 파일이 EC2 경로에 없는 것이다. CI/CD의 scp 단계를 확인한다.
+
+.env 파일이 숨겨지므로 ls-al 명령어를 치면 .env 파일이 생성된 것을 확인할 수 있다.

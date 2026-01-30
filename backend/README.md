@@ -179,6 +179,10 @@ api.gonggong.serviceKey=
 # Naver Maps api  url 설정해야함
 naver.client-id=
 naver.secret=
+
+# 추천 설정: CamelCase -> snake_case 자동 변환
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
 ```
 
 3-2. application-login.properties 설정 (OAuth)

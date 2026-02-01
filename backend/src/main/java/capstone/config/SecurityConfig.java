@@ -291,7 +291,8 @@ public class SecurityConfig {
                                 "/api/files/**",
                                 "/api/seller/**",
                                 "/api/seller/stores/**",
-                                "/api/seller/tax/**"
+                                "/api/seller/tax/**",
+                                "/api/sgis/**"     // [추가] 지도 관련 API
                         ).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/some-public-resource").permitAll()

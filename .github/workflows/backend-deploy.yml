@@ -70,8 +70,8 @@ jobs:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
           DOCKER_IMAGE_BACKEND: ${{ secrets.DOCKER_IMAGE_BACKEND }}
           DOCKER_IMAGE_FRONTEND: ${{ secrets.DOCKER_IMAGE_FRONTEND }}
-          NAVER_MAPS_CLIENT_ID: ${{ secrets.NAVER_MAPS_CLIENT_ID }}
-          NAVER_MAPS_SECRET: ${{ secrets.NAVER_MAPS_SECRET }}
+          REACT_APP_NAVER_MAPS_CLIENT_ID: ${{ secrets.REACT_APP_NAVER_MAPS_CLIENT_ID }}
+          REACT_APP_NAVER_MAPS_SECRET: ${{ secrets.REACT_APP_NAVER_MAPS_SECRET }}
           GONGGONG_KEY: ${{ secrets.GONGGONG_KEY }}
           COOKIE_SECURE: ${{ secrets.COOKIE_SECURE }}
           GOOGLE_REDIRECT_URI: ${{ vars.GOOGLE_REDIRECT_URI }}
@@ -103,8 +103,8 @@ jobs:
             S3_BUCKET_NAME,
             DOCKER_IMAGE_BACKEND,
             DOCKER_IMAGE_FRONTEND,
-            NAVER_MAPS_CLIENT_ID,
-            NAVER_MAPS_SECRET,
+            REACT_APP_NAVER_MAPS_CLIENT_ID,
+            REACT_APP_NAVER_MAPS_SECRET,
             GONGGONG_KEY,
             GOOGLE_REDIRECT_URI,
             NAVER_REDIRECT_URI,
@@ -142,8 +142,8 @@ jobs:
             echo "DOCKER_IMAGE_BACKEND=$DOCKER_IMAGE_BACKEND" >> .env
             echo "DOCKER_IMAGE_FRONTEND=$DOCKER_IMAGE_FRONTEND" >> .env
 
-            echo "NAVER_MAPS_CLIENT_ID=$NAVER_MAPS_CLIENT_ID" >> .env
-            echo "NAVER_MAPS_SECRET=$NAVER_MAPS_SECRET" >> .env
+            echo "REACT_APP_NAVER_MAPS_CLIENT_ID=$REACT_APP_NAVER_MAPS_CLIENT_ID" >> .env
+            echo "REACT_APP_NAVER_MAPS_SECRET=$REACT_APP_NAVER_MAPS_SECRET" >> .env
             echo "GONGGONG_KEY=$GONGGONG_KEY" >> .env
             echo "GOOGLE_REDIRECT_URI=$GOOGLE_REDIRECT_URI" >> .env
             echo "NAVER_REDIRECT_URI=$NAVER_REDIRECT_URI" >> .env

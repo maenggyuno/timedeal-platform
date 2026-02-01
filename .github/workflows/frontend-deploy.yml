@@ -30,14 +30,15 @@ jobs:
                   # .env 파일 생성 시작
                   touch .env
 
-                  # 1. 백엔드 API 주소 (운영 서버 IP)
+                  # 1. 백엔드 API 주소 (운영 서버 IP nginx 때메 그냥 3.~ 그것만 적어라)
                   echo "REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }}" >> .env
+                  echo "REACT_APP_BACKEND_URL=${{ vars.REACT_APP_BACKEND_URL }}" >> .env
 
                   # 2. 통계청(SGIS) 주소 - 백엔드로 옮겨서 이제 프론트에서 몰라도 됨 주석처리함
                   # echo "REACT_APP_API_BASE_URL=https://sgisapi.mods.go.kr" >> .env
 
                   # 3. 각종 시크릿 키 주입 (GitHub Secrets에서 가져옴)
-                  echo "REACT_APP_NAVER_MAPS_CLIENT_ID=${{ secrets.NAVER_MAPS_CLIENT_ID }}" >> .env
+                  echo "REACT_APP_NAVER_MAPS_CLIENT_ID=${{ secrets.REACT_APP_NAVER_MAPS_CLIENT_ID }}" >> .env
                   echo "REACT_APP_TOSS_PAYMENTS_CLIENT_KEY=${{ secrets.REACT_APP_TOSS_PAYMENTS_CLIENT_KEY }}" >> .env
                   echo "REACT_APP_SGIS_CLIENT_KEY=${{ secrets.REACT_APP_SGIS_CLIENT_KEY }}" >> .env
                   #시간 상 배포 후 시크릿 키 백엔드로 프록시 기능 이전 예정

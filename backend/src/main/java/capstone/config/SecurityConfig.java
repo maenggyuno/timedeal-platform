@@ -270,7 +270,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 // 건들면 X
                                 "/",
-                                "/oauth2/authorization/**",
+                                "/api/oauth2/authorization/**",
                                 "/api/auth/**",
                                 "/error",
                                 "/favicon.ico",

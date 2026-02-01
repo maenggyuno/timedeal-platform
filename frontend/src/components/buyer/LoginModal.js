@@ -4,8 +4,8 @@ import modalStyles from '../../styles/buyer/LoginModal.module.css';
 const LoginModal = ({ onClose }) => {
   // const GOOGLE_AUTH_URL = 'http://localhost:8080/oauth2/authorization/google';
   // const NAVER_AUTH_URL = 'http://localhost:8080/oauth2/authorization/naver';
-  const GOOGLE_AUTH_URL = '/oauth2/authorization/google';
-  const NAVER_AUTH_URL = '/oauth2/authorization/naver';
+  const GOOGLE_AUTH_URL = 'api/oauth2/authorization/google';
+  const NAVER_AUTH_URL = 'api/oauth2/authorization/naver';
 
   const handleSocialLogin = (platform) => {
     if (platform === 'google') {

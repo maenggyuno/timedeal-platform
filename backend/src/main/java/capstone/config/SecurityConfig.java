@@ -260,65 +260,77 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                // 건들면 X
-                                "/",
-                                "/api/oauth2/authorization/**",
-                                "/api/auth/**",
-                                "/error",
-                                "/favicon.ico",
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    // 건들면 X
+                    "/",
+                    "/api/oauth2/authorization/**",
+                    "/api/auth/**",
+                    "/api/login/oauth2/code/**",    // 콜백 경로도 허용
+                    "/error",
+                    "/favicon.ico",
 
-                                // 공통
-                                "/api/qrCode/**",
+                    // 공통
+                    "/api/qrCode/**",
 
-                                // 판매자 사이트 부분
-                                "/api/buyer/products/**",
-                                "/api/buyer/products/search/**",
-                                "/api/buyer/stores/**",
-                                "/api/buyer/maps/**",
-                                "/api/buyer/pay/**",
-                                "/api/buyer/order/**",
-                                "/api/buyer/review/**",
+                    // 판매자 사이트 부분
+                    "/api/buyer/products/**",
+                    "/api/buyer/products/search/**",
+                    "/api/buyer/stores/**",
+                    "/api/buyer/maps/**",
+                    "/api/buyer/pay/**",
+                    "/api/buyer/order/**",
+                    "/api/buyer/review/**",
 
-                                // 구매자 사이트 부분
-                                "/api/files/**",
-                                "/api/seller/**",
-                                "/api/seller/stores/**",
-                                "/api/seller/tax/**",
-                                "/api/sgis/**"     // [추가] 지도 관련 API
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/some-public-resource").permitAll()
-                        .anyRequest().authenticated()
+                    // 구매자 사이트 부분
+                    "/api/files/**",
+                    "/api/seller/**",
+                    "/api/seller/stores/**",
+                    "/api/seller/tax/**",
+                    "/api/sgis/**"     // [추가] 지도 관련 API
+                ).permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/some-public-resource").permitAll()
+                .anyRequest().authenticated()
+            )
+
+            // XHR는 /login 으로 리다이렉트 대신 401을 주도록
+            .exceptionHandling(e -> e
+                .authenticationEntryPoint(
+                    new org.springframework.security.web.authentication.HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
                 )
+            )
 
-                // XHR는 /login 으로 리다이렉트 대신 401을 주도록
-                .exceptionHandling(e -> e
-                        .authenticationEntryPoint(
-                                new org.springframework.security.web.authentication.HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
-                        )
-                )
+            .oauth2Login(oauth2 -> oauth2
 
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .successHandler(oAuth2LoginSuccessHandler)
-                        .failureHandler(oAuth2LoginFailureHandler)
+                // 1. 로그인 시작 주소 설정 (authorizationEndpoint)
+                // 기본값 /oauth2/authorization/{registrationId} -> /api/oauth2/authorization/{registrationId}
+                .authorizationEndpoint(authorization -> authorization
+                    .baseUri("/api/oauth2/authorization")
                 )
+                // 2. 네이버가 인증코드를 보내줄 도착지 주소 설정 (redirectionEndpoint)
+                // 기본값 /login/oauth2/code/{registrationId} -> /api/login/oauth2/code/*
+                .redirectionEndpoint(redirection -> redirection
+                    .baseUri("/api/login/oauth2/code/*")
+                )
+                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                .successHandler(oAuth2LoginSuccessHandler)
+                .failureHandler(oAuth2LoginFailureHandler)
+            )
 
-                .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout")
-                        .logoutSuccessHandler(customLogoutSuccessHandler)
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+            .logout(logout -> logout
+                .logoutUrl("/api/auth/logout")
+                .logoutSuccessHandler(customLogoutSuccessHandler)
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+            )
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

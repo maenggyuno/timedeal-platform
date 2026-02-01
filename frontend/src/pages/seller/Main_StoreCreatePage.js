@@ -26,12 +26,6 @@ const Main_StoreCreatePage = () => {
   const detailAddressRef = useRef(null);
   const tokenCache = useRef({ token: null, exp: 0 });
 
-  const SGIS_KEY = process.env.REACT_APP_SGIS_CLIENT_KEY;
-  const SGIS_SECRET = process.env.REACT_APP_SGIS_SECRET;
-  //프록시 cors 해결을 위한 상대경로 설정 세팅 로컬은 Proxy(상대 경로)를 태우고, 배포는 실제 도메인을 사용하도록 분기
-  const BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
-
-
   // --- 스크립트 로드 ---
   useEffect(() => {
     const script = document.createElement('script');
@@ -40,52 +34,81 @@ const Main_StoreCreatePage = () => {
     document.head.appendChild(script);
     return () => { document.head.removeChild(script); };
   }, []);
+  //
+  // // --- API 및 유틸리티 함수 ---
+  // const getSgisToken = async () => {
+  //   const now = Date.now();
+  //   if (tokenCache.current.token && now < tokenCache.current.exp) {
+  //     return tokenCache.current.token;
+  //   }
+  //   if (!SGIS_KEY || !SGIS_SECRET) {
+  //     setMessage('SGIS API 키가 설정되지 않았습니다.');
+  //     throw new Error('SGIS KEY/SECRET is not set');
+  //   }
+  //   const url = `${BASE_URL}/OpenAPI3/auth/authentication.json?consumer_key=${SGIS_KEY}&consumer_secret=${SGIS_SECRET}`;
+  //   const res = await fetch(url);
+  //   const data = await res.json();
+  //   if (data.errCd !== 0 || !data?.result?.accessToken) {
+  //     throw new Error(`SGIS 인증 실패: ${data.errMsg || '토큰 없음'}`);
+  //   }
+  //   const token = data.result.accessToken;
+  //   tokenCache.current = { token, exp: now + 25 * 60 * 1000 };
+  //   return token;
+  // };
+  //
+  // const geocodeWGS84 = async (addr, retried = false) => {
+  //   try {
+  //     const token = await getSgisToken();
+  //     const url =
+  //       `${BASE_URL}/OpenAPI3/addr/geocodewgs84.json` +
+  //       `?accessToken=${encodeURIComponent(token)}` +
+  //       `&address=${encodeURIComponent(addr)}`;
+  //     const res = await fetch(url);
+  //     const data = await res.json();
+  //     if (data.errCd !== 0) {
+  //       if (data.errCd === -401 && !retried) {
+  //         tokenCache.current = { token: null, exp: 0 };
+  //         return geocodeWGS84(addr, true);
+  //       }
+  //       console.warn('[SGIS Geocoding Error]', data.errMsg);
+  //       return null;
+  //     }
+  //     const firstResult = data?.result?.resultdata?.[0];
+  //     return firstResult ? { lat: String(firstResult.y), lng: String(firstResult.x) } : null;
+  //   } catch (error) {
+  //     console.error("Geocoding failed", error);
+  //     throw error;
+  //   }
+  // };
+// [삭제] const getSgisToken = ... (이제 필요 없음!)
 
-  // --- API 및 유틸리티 함수 ---
-  const getSgisToken = async () => {
-    const now = Date.now();
-    if (tokenCache.current.token && now < tokenCache.current.exp) {
-      return tokenCache.current.token;
-    }
-    if (!SGIS_KEY || !SGIS_SECRET) {
-      setMessage('SGIS API 키가 설정되지 않았습니다.');
-      throw new Error('SGIS KEY/SECRET is not set');
-    }
-    const url = `${BASE_URL}/OpenAPI3/auth/authentication.json?consumer_key=${SGIS_KEY}&consumer_secret=${SGIS_SECRET}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.errCd !== 0 || !data?.result?.accessToken) {
-      throw new Error(`SGIS 인증 실패: ${data.errMsg || '토큰 없음'}`);
-    }
-    const token = data.result.accessToken;
-    tokenCache.current = { token, exp: now + 25 * 60 * 1000 };
-    return token;
-  };
-
-  const geocodeWGS84 = async (addr, retried = false) => {
+// [수정] 백엔드한테 "좌표 줘" 한 마디만 하면 끝
+  const geocodeWGS84 = async (addr) => {
     try {
-      const token = await getSgisToken();
-      const url =
-        `${BASE_URL}/OpenAPI3/addr/geocodewgs84.json` +
-        `?accessToken=${encodeURIComponent(token)}` +
-        `&address=${encodeURIComponent(addr)}`;
+      // 1. 토큰? 키값? 다 필요 없음. 그냥 주소만 백엔드로 던짐.
+      // 백엔드 주소: /api/sgis/geocode (아까 만든 Controller)
+      const baseUrl = process.env.REACT_APP_API_URL || '';
+      const url = `${baseUrl}/api/sgis/geocode?address=${encodeURIComponent(addr)}`;
+
       const res = await fetch(url);
       const data = await res.json();
-      if (data.errCd !== 0) {
-        if (data.errCd === -401 && !retried) {
-          tokenCache.current = { token: null, exp: 0 };
-          return geocodeWGS84(addr, true);
-        }
-        console.warn('[SGIS Geocoding Error]', data.errMsg);
+
+      // 2. 에러 처리
+      if (data.errCd && data.errCd !== 0) {
+        console.warn('[SGIS Error]', data.errMsg);
         return null;
       }
+
+      // 3. 결과 반환 (구조는 동일)
       const firstResult = data?.result?.resultdata?.[0];
       return firstResult ? { lat: String(firstResult.y), lng: String(firstResult.x) } : null;
+
     } catch (error) {
       console.error("Geocoding failed", error);
-      throw error;
+      throw error; // 필요하면 에러 다시 던지기
     }
   };
+
 
   useEffect(() => {
     const combinedAddress = baseAddress ? `${baseAddress}, ${detailAddress}` : '';
@@ -95,7 +118,7 @@ const Main_StoreCreatePage = () => {
     }
     const handler = setTimeout(async () => {
       try {
-        const coords = await geocodeWGS84(combinedAddress);
+        const coords = await geocodeWGS84(baseAddress);
         if (coords) {
           setLatitude(coords.lat); setLongitude(coords.lng); setMessage('');
         } else {
@@ -149,7 +172,8 @@ const Main_StoreCreatePage = () => {
     }
     try {
       setBizCheckState('checking');
-      const res = await fetch(`/api/seller/tax/biz-status?bno=${cleanedBno}`);
+      const baseUrl = process.env.REACT_APP_API_URL || '';
+      const res = await fetch(`${baseUrl}/api/seller/tax/biz-status?bno=${cleanedBno}`);
       if (!res.ok) throw new Error(`API 오류(${res.status})`);
       const data = await res.json();
       const item = data?.data?.[0];
@@ -198,9 +222,11 @@ const Main_StoreCreatePage = () => {
       payment_method: paymentMethod,
     };
     try {
-      const res = await fetch('/api/seller/store/create', {
+      const baseUrl = process.env.REACT_APP_API_URL || '';
+      const res = await fetch(`${baseUrl}/api/seller/store/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
       if (!res.ok) {

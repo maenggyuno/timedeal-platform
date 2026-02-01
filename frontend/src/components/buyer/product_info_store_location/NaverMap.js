@@ -12,7 +12,7 @@ const NaverMap = ({ latitude, longitude }) => {
             setIsScriptLoaded(true);
             return;
         }
-        
+
         const script = document.createElement('script');
         script.type = 'text/javascript';
         const clientId = process.env.REACT_APP_NAVER_MAPS_CLIENT_ID;
@@ -23,7 +23,7 @@ const NaverMap = ({ latitude, longitude }) => {
         };
         script.onerror = () => console.error('네이버 맵스 스크립트 로드 실패');
         document.head.appendChild(script);
-    }, []); 
+    }, []);
 
     // 2. 지도를 생성하는 useEffect (스크립트 로딩이 완료되고, 좌표가 있을 때만 실행)
     useEffect(() => {

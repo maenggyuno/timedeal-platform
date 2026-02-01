@@ -2,10 +2,15 @@ import axios from 'axios';
 
 //8월 11일 균오 수정 수동 재고 차감 증가
 //8월 19일 절대주소 대신 상대경로로 변경
+//API 호출 코드 백엔드가 만든 요리를 주문하기 위해 브라우저에서 실행될 주문서(Axios/Fetch 코드)를 작성
+
+// .env 파일에서 URL을 가져옵니다.
+// 배포 환경에서는 Nginx가 /api를 가로채므로 빈 문자열('')이거나 상대 경로일 수 있습니다.
+const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
 
 const api = axios.create({
-    baseURL: '/api',
-    withCredentials: true,
+  baseURL: `${backendUrl}/api`,
+  withCredentials: true,
 });
 
 // 프리사인드 URL 발급

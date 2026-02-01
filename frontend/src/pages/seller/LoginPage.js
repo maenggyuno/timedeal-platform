@@ -14,8 +14,8 @@ const LoginPage = () => {
   // 없으면 기본값으로 상대 경로를 사용하도록 설정합니다.
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
 
-  const GOOGLE_LOGIN_URL = `${BACKEND_URL}/oauth2/authorization/google`;
-  const NAVER_LOGIN_URL = `${BACKEND_URL}/oauth2/authorization/naver`;
+  const GOOGLE_LOGIN_URL = `${BACKEND_URL}/api/oauth2/authorization/google`;
+  const NAVER_LOGIN_URL = `${BACKEND_URL}/api/oauth2/authorization/naver`;
 
   const handleSocialLogin = (provider) => {
     localStorage.setItem('redirectPathAfterLogin', '/seller/dashboard');

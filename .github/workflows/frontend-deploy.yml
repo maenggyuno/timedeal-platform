@@ -107,6 +107,7 @@ on:
     paths:
       - 'frontend/**'
       - 'frontend-deploy.yml'
+    workflow_dispatch:
 
 jobs:
   deploy:

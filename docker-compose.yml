@@ -39,6 +39,9 @@ services:
       - REACT_APP_SGIS_SECRET=${REACT_APP_SGIS_SECRET}
     networks:
       - timedeal-net
+networks:
+  timedeal-net:
+    driver: bridge
 
   # 2. 프론트엔드 (이미지 가져오기)
 #  frontend:
@@ -53,6 +56,4 @@ services:
 #    networks:
 #      - timedeal-net
 #
-#networks:
-#  timedeal-net:
-#    driver: bridge
+

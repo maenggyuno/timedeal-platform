@@ -6,6 +6,7 @@ import Header from "../../components/seller/Header";
 import Footer from "../../components/seller/Footer";
 import Sidebar from "../../components/seller/Sidebar";
 
+const BASE_URL = process.env.REACT_APP_API_URL || '';
 // 페이지네이션 컴포넌트
 const Pagination = ({ page, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;

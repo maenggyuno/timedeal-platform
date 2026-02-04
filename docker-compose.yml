@@ -39,6 +39,22 @@ services:
       - REACT_APP_SGIS_SECRET=${REACT_APP_SGIS_SECRET}
     networks:
       - timedeal-net
+
+      # 2. Nginx (리버스 프록시) - 👇 추가된 부분!
+  nginx:
+    image: nginx:latest
+    container_name: timedeal-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      # 루트에 있는 nginx.conf를 컨테이너 설정으로 연결
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - timedeal-net
+
 networks:
   timedeal-net:
     driver: bridge

@@ -145,7 +145,7 @@ jobs:
       - name: 의존성 설치 및 빌드
         run: |
           npm install
-          npm run build
+          CI=false npm run build
         # ⚠️ 위에서 .env 파일을 만들었으므로, 여기서 env: 섹션은 삭제했습니다. (중복 제거)
 
       - name: AWS 자격증명 설정

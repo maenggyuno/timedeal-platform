@@ -41,18 +41,18 @@ services:
       - timedeal-net
 
   # 2. 프론트엔드 (이미지 가져오기)
-  frontend:
-    # ⚠️ [핵심] 여기서도 build, args 싹 지우고 이미지 사용!
-    image: ${DOCKER_IMAGE_FRONTEND}
-    container_name: timedeal-frontend
-    restart: always
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    networks:
-      - timedeal-net
-
-networks:
-  timedeal-net:
-    driver: bridge
+#  frontend:
+#    # ⚠️ [핵심] 여기서도 build, args 싹 지우고 이미지 사용!
+#    image: ${DOCKER_IMAGE_FRONTEND}
+#    container_name: timedeal-frontend
+#    restart: always
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - backend
+#    networks:
+#      - timedeal-net
+#
+#networks:
+#  timedeal-net:
+#    driver: bridge

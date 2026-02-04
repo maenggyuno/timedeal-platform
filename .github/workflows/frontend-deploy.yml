@@ -1,100 +1,164 @@
 # .github/workflows/frontend-backend-deploy.disabled.yml (Frontend)
-name: Frontend CI/CD
+#name: Frontend CI/CD
+#
+#on:
+#    push:
+#        branches: [ "main" ]
+#        paths:
+#            - 'frontend/**'
+#            - 'docker-compose.yml'
+#
+#jobs:
+#    build-and-deploy:
+#        runs-on: ubuntu-latest
+#        steps:
+#            - name: Checkout
+#              uses: actions/checkout@v3
+#
+#            - name: Login to Docker Hub
+#              uses: docker/login-action@v2
+#              with:
+#                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+#                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#            # 👇 [새로 추가된 부분] 빌드 전에 .env 파일을 생성합니다!
+#            - name: Create .env file for Frontend
+#              run: |
+#                  # frontend 폴더로 이동 (중요!)
+#                  cd frontend
+#
+#                  # .env 파일 생성 시작
+#                  touch .env
+#
+#                  # 1. 백엔드 API 주소 (운영 서버 IP nginx 때메 그냥 3.~ 그것만 적어라)
+#                  echo "REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }}" >> .env
+#                  echo "REACT_APP_BACKEND_URL=${{ vars.REACT_APP_BACKEND_URL }}" >> .env
+#
+#                  # 2. 통계청(SGIS) 주소 - 백엔드로 옮겨서 이제 프론트에서 몰라도 됨 주석처리함
+#                  # echo "REACT_APP_API_BASE_URL=https://sgisapi.mods.go.kr" >> .env
+#
+#                  # 3. 각종 시크릿 키 주입 (GitHub Secrets에서 가져옴)
+#                  echo "REACT_APP_NAVER_MAPS_CLIENT_ID=${{ secrets.REACT_APP_NAVER_MAPS_CLIENT_ID }}" >> .env
+#                  echo "REACT_APP_TOSS_PAYMENTS_CLIENT_KEY=${{ secrets.REACT_APP_TOSS_PAYMENTS_CLIENT_KEY }}" >> .env
+#                  echo "REACT_APP_SGIS_CLIENT_KEY=${{ secrets.REACT_APP_SGIS_CLIENT_KEY }}" >> .env
+#                  #시간 상 배포 후 시크릿 키 백엔드로 프록시 기능 이전 예정
+#                  echo "REACT_APP_SGIS_SECRET=${{ secrets.REACT_APP_SGIS_SECRET }}" >> .env
+#
+#                  # 파일 잘 만들어졌나 확인 (내용은 안 보여줌)
+#                  echo ".env created successfully!"
+#
+#            - name: Build and push Docker image
+#              uses: docker/build-push-action@v4
+#              with:
+#                  context: ./frontend
+#                  file: ./frontend/Dockerfile
+#                  push: true
+#                  tags: ${{ secrets.DOCKER_IMAGE_FRONTEND }}
+#
+#            # [자동화] 폴더가 없으면 에러 나니까, 미리 생성해줍니다!
+#            - name: Create directory on EC2
+#              uses: appleboy/ssh-action@master
+#              with:
+#                  host: ${{ secrets.EC2_HOST }}
+#                  username: ${{ secrets.EC2_USERNAME }}
+#                  key: ${{ secrets.EC2_SSH_KEY }}
+#                  port: 22
+#                  script: |
+#                      # -p 옵션: 폴더가 이미 있으면 무시하고, 없으면 만듭니다. (에러 안 남!)
+#                      mkdir -p /home/ubuntu/timedeal-platform
+#
+#            # 👇 [새로 추가] docker-compose.yml 파일을 EC2로 복사 (전송)
+#            - name: Copy Docker Compose file to EC2
+#              uses: appleboy/scp-action@master
+#              with:
+#                  host: ${{ secrets.EC2_HOST }}
+#                  username: ${{ secrets.EC2_USERNAME }}
+#                  key: ${{ secrets.EC2_SSH_KEY }}
+#                  port: 22
+#                  # 내 깃허브 프로젝트 루트에 있는 docker-compose.yml 파일을
+#                  source: "docker-compose.yml"
+#                  # EC2의 이 폴더로 덮어씌워라!
+#                  target: "/home/ubuntu/timedeal-platform"
+#
+#            - name: Deploy to EC2
+#              uses: appleboy/ssh-action@master
+#              with:
+#                  host: ${{ secrets.EC2_HOST }}
+#                  username: ${{ secrets.EC2_USERNAME }}
+#                  key: ${{ secrets.EC2_SSH_KEY }}
+#                  port: 22
+#                  script: |
+#                      cd /home/ubuntu/timedeal-platform
+#
+#                      # 1. 최신 프론트엔드 이미지를 pull
+#                      docker-compose pull frontend
+#
+#                      # 2. 프론트엔드 컨테이너만 재시작
+#                      docker-compose up -d --no-deps frontend
+#
+#                      # 3. 이미지 찌꺼기 정리
+#                      docker image prune -f
+
+name: Frontend Deploy to S3
 
 on:
-    push:
-        branches: [ "main" ]
-        paths:
-            - 'frontend/**'
-            - 'docker-compose.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
 
 jobs:
-    build-and-deploy:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend # 👈 이미 여기서 frontend 폴더로 들어간 상태입니다!
 
-            - name: Login to Docker Hub
-              uses: docker/login-action@v2
-              with:
-                  username: ${{ secrets.DOCKERHUB_USERNAME }}
-                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      - name: 체크아웃 (코드 가져오기)
+        uses: actions/checkout@v3
 
-            # 👇 [새로 추가된 부분] 빌드 전에 .env 파일을 생성합니다!
-            - name: Create .env file for Frontend
-              run: |
-                  # frontend 폴더로 이동 (중요!)
-                  cd frontend
+      - name: Node.js 세팅
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-                  # .env 파일 생성 시작
-                  touch .env
+      # 👇 [수정됨] 들여쓰기 맞춤 & 'cd frontend' 제거
+      - name: 환경변수 파일(.env) 생성
+        run: |
+          # 이미 working-directory가 ./frontend라서 'cd frontend'를 또 하면 에러납니다. 바로 만드세요.
+          touch .env
 
-                  # 1. 백엔드 API 주소 (운영 서버 IP nginx 때메 그냥 3.~ 그것만 적어라)
-                  echo "REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }}" >> .env
-                  echo "REACT_APP_BACKEND_URL=${{ vars.REACT_APP_BACKEND_URL }}" >> .env
+          # 1. 백엔드 연결 정보 (GitHub Variables)
+          echo "REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }}" >> .env
+          echo "REACT_APP_BACKEND_URL=${{ vars.REACT_APP_BACKEND_URL }}" >> .env
 
-                  # 2. 통계청(SGIS) 주소 - 백엔드로 옮겨서 이제 프론트에서 몰라도 됨 주석처리함
-                  # echo "REACT_APP_API_BASE_URL=https://sgisapi.mods.go.kr" >> .env
+          # 2. 시크릿 키 주입 (GitHub Secrets)
+          echo "REACT_APP_NAVER_MAPS_CLIENT_ID=${{ secrets.REACT_APP_NAVER_MAPS_CLIENT_ID }}" >> .env
+          echo "REACT_APP_TOSS_PAYMENTS_CLIENT_KEY=${{ secrets.REACT_APP_TOSS_PAYMENTS_CLIENT_KEY }}" >> .env
+          echo "REACT_APP_SGIS_CLIENT_KEY=${{ secrets.REACT_APP_SGIS_CLIENT_KEY }}" >> .env
+          echo "REACT_APP_SGIS_SECRET=${{ secrets.REACT_APP_SGIS_SECRET }}" >> .env
 
-                  # 3. 각종 시크릿 키 주입 (GitHub Secrets에서 가져옴)
-                  echo "REACT_APP_NAVER_MAPS_CLIENT_ID=${{ secrets.REACT_APP_NAVER_MAPS_CLIENT_ID }}" >> .env
-                  echo "REACT_APP_TOSS_PAYMENTS_CLIENT_KEY=${{ secrets.REACT_APP_TOSS_PAYMENTS_CLIENT_KEY }}" >> .env
-                  echo "REACT_APP_SGIS_CLIENT_KEY=${{ secrets.REACT_APP_SGIS_CLIENT_KEY }}" >> .env
-                  #시간 상 배포 후 시크릿 키 백엔드로 프록시 기능 이전 예정
-                  echo "REACT_APP_SGIS_SECRET=${{ secrets.REACT_APP_SGIS_SECRET }}" >> .env
+          echo ".env created successfully!"
 
-                  # 파일 잘 만들어졌나 확인 (내용은 안 보여줌)
-                  echo ".env created successfully!"
+      - name: 의존성 설치 및 빌드
+        run: |
+          npm install
+          npm run build
+        # ⚠️ 위에서 .env 파일을 만들었으므로, 여기서 env: 섹션은 삭제했습니다. (중복 제거)
 
-            - name: Build and push Docker image
-              uses: docker/build-push-action@v4
-              with:
-                  context: ./frontend
-                  file: ./frontend/Dockerfile
-                  push: true
-                  tags: ${{ secrets.DOCKER_IMAGE_FRONTEND }}
+      - name: AWS 자격증명 설정
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
 
-            # [자동화] 폴더가 없으면 에러 나니까, 미리 생성해줍니다!
-            - name: Create directory on EC2
-              uses: appleboy/ssh-action@master
-              with:
-                  host: ${{ secrets.EC2_HOST }}
-                  username: ${{ secrets.EC2_USERNAME }}
-                  key: ${{ secrets.EC2_SSH_KEY }}
-                  port: 22
-                  script: |
-                      # -p 옵션: 폴더가 이미 있으면 무시하고, 없으면 만듭니다. (에러 안 남!)
-                      mkdir -p /home/ubuntu/timedeal-platform
+      - name: S3에 파일 업로드 (동기화)
+        run: |
+          aws s3 sync build/ s3://${{ secrets.S3_WEBPAGE_BUCKET_NAME }} --delete
 
-            # 👇 [새로 추가] docker-compose.yml 파일을 EC2로 복사 (전송)
-            - name: Copy Docker Compose file to EC2
-              uses: appleboy/scp-action@master
-              with:
-                  host: ${{ secrets.EC2_HOST }}
-                  username: ${{ secrets.EC2_USERNAME }}
-                  key: ${{ secrets.EC2_SSH_KEY }}
-                  port: 22
-                  # 내 깃허브 프로젝트 루트에 있는 docker-compose.yml 파일을
-                  source: "docker-compose.yml"
-                  # EC2의 이 폴더로 덮어씌워라!
-                  target: "/home/ubuntu/timedeal-platform"
-
-            - name: Deploy to EC2
-              uses: appleboy/ssh-action@master
-              with:
-                  host: ${{ secrets.EC2_HOST }}
-                  username: ${{ secrets.EC2_USERNAME }}
-                  key: ${{ secrets.EC2_SSH_KEY }}
-                  port: 22
-                  script: |
-                      cd /home/ubuntu/timedeal-platform
-
-                      # 1. 최신 프론트엔드 이미지를 pull
-                      docker-compose pull frontend
-
-                      # 2. 프론트엔드 컨테이너만 재시작
-                      docker-compose up -d --no-deps frontend
-
-                      # 3. 이미지 찌꺼기 정리
-                      docker image prune -f
+      - name: CloudFront 캐시 무효화 (Invalidation)
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_ID }} --paths "/*"

@@ -7,6 +7,8 @@ import Footer from '../../components/seller/Footer';
 import NaverMapService from '../../components/buyer/map_location_page/NaverMapService';
 import Sidebar from '../../components/seller/Sidebar';
 
+const BASE_URL = process.env.REACT_APP_API_URL || '';
+
 const maskName = (name = '') => {
   const s = name.trim();
   if (!s) return '익명';

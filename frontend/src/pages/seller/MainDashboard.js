@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { fetchDashboardMarts } from '../../services/sellerApi';
 import styles from '../../styles/seller/MainDashboard.module.css';
 import Header from '../../components/seller/Header';

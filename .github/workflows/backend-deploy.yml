@@ -9,6 +9,7 @@ on:
       - 'docker-compose.yml'
       - '!backend/README.md'
       - '.github/workflows/backend-deploy.yml'
+      - 'nginx.conf'
   workflow_dispatch:
 
 jobs:

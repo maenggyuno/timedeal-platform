@@ -106,6 +106,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'frontend/**'
+      - 'frontend-deploy.yml'
 
 jobs:
   deploy:

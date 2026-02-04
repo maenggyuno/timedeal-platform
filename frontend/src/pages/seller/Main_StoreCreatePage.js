@@ -26,6 +26,9 @@ const Main_StoreCreatePage = () => {
   const detailAddressRef = useRef(null);
   const tokenCache = useRef({ token: null, exp: 0 });
 
+  // 👇 [전역 변수] 대문자로 통일하고 맨 위에 선언!
+  const BASE_URL = process.env.REACT_APP_API_URL || '';
+
   // --- 스크립트 로드 ---
   useEffect(() => {
     const script = document.createElement('script');
@@ -87,8 +90,7 @@ const Main_StoreCreatePage = () => {
     try {
       // 1. 토큰? 키값? 다 필요 없음. 그냥 주소만 백엔드로 던짐.
       // 백엔드 주소: /api/sgis/geocode (아까 만든 Controller)
-      const baseUrl = process.env.REACT_APP_API_URL || '';
-      const url = `${baseUrl}/api/sgis/geocode?address=${encodeURIComponent(addr)}`;
+      const url = `${BASE_URL}/api/sgis/geocode?address=${encodeURIComponent(addr)}`;
 
       const res = await fetch(url);
       const data = await res.json();
@@ -172,8 +174,7 @@ const Main_StoreCreatePage = () => {
     }
     try {
       setBizCheckState('checking');
-      const baseUrl = process.env.REACT_APP_API_URL || '';
-      const res = await fetch(`${baseUrl}/api/seller/tax/biz-status?bno=${cleanedBno}`);
+      const res = await fetch(`${BASE_URL}/api/seller/tax/biz-status?bno=${cleanedBno}`);
       if (!res.ok) throw new Error(`API 오류(${res.status})`);
       const data = await res.json();
       const item = data?.data?.[0];
@@ -222,8 +223,7 @@ const Main_StoreCreatePage = () => {
       payment_method: paymentMethod,
     };
     try {
-      const baseUrl = process.env.REACT_APP_API_URL || '';
-      const res = await fetch(`${baseUrl}/api/seller/store/create`, {
+      const res = await fetch(`${BASE_URL}/api/seller/store/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

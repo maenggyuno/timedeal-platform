@@ -29,7 +29,7 @@ const formatTimeLeft = (iso, prefix) => {
   if (!iso) return "";
   const end = new Date(iso);
   if (isNaN(end.getTime())) return "";
-  
+
   const now = new Date();
   const diffMs = end - now;
   if (diffMs <= 0) return `${prefix} 만료`;
@@ -57,7 +57,7 @@ const MartDashboard = () => {
 
   const fetchData = useCallback(async (endpoint, setter, page) => {
     try {
-      const res = await fetch(`/api/seller/stores/${martId}/dashboard/${endpoint}?page=${page}`);
+      const res = await fetch(`${BASE_URL}/api/seller/stores/${martId}/dashboard/${endpoint}?page=${page}`);
       if (res.ok) {
         const data = await res.json();
         setter({ content: data.content || [], totalPages: data.totalPages || 0 });
@@ -100,7 +100,7 @@ const MartDashboard = () => {
                 </ul>
                 <Pagination page={resPage} totalPages={reservations.totalPages} onPageChange={setResPage} />
               </div>
-              
+
               {/* (2) 실시간 구매 현황 */}
               <div className={`${styles.section} ${styles.sectionFixed}`}>
                 <h2><FaShoppingCart /> 실시간 구매 현황</h2>

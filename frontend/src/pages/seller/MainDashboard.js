@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { fetchDashboardMarts } from '../../services/sellerApi';
 import styles from '../../styles/seller/MainDashboard.module.css';
 import Header from '../../components/seller/Header';
 import Footer from '../../components/seller/Footer';
+
+const BASE_URL = process.env.REACT_APP_API_URL || '';
 
 const MainDashboard = () => {
   const [marts, setMarts] = useState([]);
@@ -17,7 +19,8 @@ const MainDashboard = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await axios.get('/api/seller/store/dashboard');
+        // const response = await axios.get('/api/seller/store/dashboard');
+        const response = await fetchDashboardMarts(); // 👈 [수정] 이렇게 변경!
         setMarts(response.data);
       } catch (e) {
         console.error("매장 목록을 불러오는 데 실패했습니다.", e);
@@ -59,7 +62,7 @@ const MainDashboard = () => {
     if (window.confirm(`매장을 정말 삭제하시겠습니까?`)) {
       try {
         // 1. 서버에 DELETE 요청 보내기
-        await axios.delete(`/api/seller/store/${storeId}`);
+        await axios.delete(`${BASE_URL}/api/seller/store/${storeId}`);
 
         // 2. 요청 성공 시, 화면(state)에서 해당 매장 제거
         setMarts(currentMarts =>

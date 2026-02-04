@@ -122,7 +122,7 @@ jobs:
       - name: Node.js 세팅
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
       # 👇 [수정됨] 들여쓰기 맞춤 & 'cd frontend' 제거
       - name: 환경변수 파일(.env) 생성

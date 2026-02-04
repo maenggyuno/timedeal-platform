@@ -5,6 +5,9 @@ import styles from '../../styles/seller/StoreManagePage.module.css';
 import Header from '../../components/seller/Header';
 import Footer from '../../components/seller/Footer';
 
+// 👇 [전역 변수] 한 번만 선언해서 계속 씁니다.
+const BASE_URL = process.env.REACT_APP_API_URL || '';
+
 const EditableField = ({label, children, onSave}) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -46,15 +49,12 @@ const StoreInfoTab = ({storeId}) => {
   const [detailAddress, setDetailAddress] = useState('');
   const detailAddressRef = useRef(null);
 
-  const SGIS_KEY = process.env.REACT_APP_SGIS_CLIENT_KEY;
-  const SGIS_SECRET = process.env.REACT_APP_SGIS_SECRET;
-  const tokenCache = useRef({token: null, exp: 0});
-
   useEffect(() => {
     const fetchStoreData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/seller/store/${storeId}`);
+        // 👇 [수정] BASE_URL 추가
+        const response = await axios.get(`${BASE_URL}/api/seller/store/${storeId}`);
         setStoreData(response.data);
 
         const fullAddress = response.data.address || '';
@@ -104,7 +104,8 @@ const StoreInfoTab = ({storeId}) => {
   };
 
   const handleSave = async (endpoint, payload) => {
-    return axios.patch(`/api/seller/store/${storeId}/${endpoint}`, payload);
+    // 👇 [수정] BASE_URL 추가
+    return axios.patch(`${BASE_URL}/api/seller/store/${storeId}/${endpoint}`, payload);
   };
 
   const handleSaveName = () => handleSave('name', {name: storeData.name});
@@ -115,52 +116,28 @@ const StoreInfoTab = ({storeId}) => {
   });
   const handleSavePaymentMethod = () => handleSave('payment-method', {paymentMethod: storeData.paymentMethod});
 
-  //프록시 cors 해결을 위한 상대경로 설정 세팅 로컬은 Proxy(상대 경로)를 태우고, 배포는 실제 도메인을 사용하도록 분기
-  const BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
-
-  const getSgisToken = async () => {
-    const now = Date.now();
-    if (tokenCache.current.token && now < tokenCache.current.exp) {
-      return tokenCache.current.token;
-    }
-    if (!SGIS_KEY || !SGIS_SECRET) {
-      throw new Error('SGIS KEY/SECRET is not set');
-    }
-    const url = `${BASE_URL}/OpenAPI3/auth/authentication.json?consumer_key=${SGIS_KEY}&consumer_secret=${SGIS_SECRET}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.errCd !== 0 || !data?.result?.accessToken) {
-      throw new Error(`SGIS 인증 실패: ${data.errMsg || '토큰 없음'}`);
-    }
-    const token = data.result.accessToken;
-    tokenCache.current = {token, exp: now + 25 * 60 * 1000};
-    return token;
-  };
-
-  const geocodeWGS84 = async (addr, retried = false) => {
+  // 👇 [대폭 수정] 옛날 SGIS 토큰 로직 다 지우고, 백엔드에 요청하는 깔끔한 함수로 변경!
+  const geocodeWGS84 = async (addr) => {
     try {
-      const token = await getSgisToken();
-      const url =
-        `${BASE_URL}/OpenAPI3/addr/geocodewgs84.json` +
-        `?accessToken=${encodeURIComponent(token)}` +
-        `&address=${encodeURIComponent(addr)}`;
+      // 백엔드 주소로 바로 요청 (토큰 필요 없음)
+      const url = `${BASE_URL}/api/sgis/geocode?address=${encodeURIComponent(addr)}`;
+
       const res = await fetch(url);
       const data = await res.json();
-      if (data.errCd !== 0) {
-        if (data.errCd === -401 && !retried) {
-          tokenCache.current = {token: null, exp: 0};
-          return geocodeWGS84(addr, true);
-        }
-        console.warn('[SGIS Geocoding Error]', data.errMsg);
+
+      if (data.errCd && data.errCd !== 0) {
+        console.warn('[SGIS Error]', data.errMsg);
         return null;
       }
       const firstResult = data?.result?.resultdata?.[0];
-      return firstResult ? {lat: String(firstResult.y), lng: String(firstResult.x)} : null;
+      return firstResult ? { lat: String(firstResult.y), lng: String(firstResult.x) } : null;
+
     } catch (error) {
       console.error("Geocoding failed", error);
       throw error;
     }
   };
+  // 👆 여기까지 수정 끝 (getSgisToken 함수 등은 이제 필요 없어서 삭제됨)
 
   const handleSaveAddress = async () => {
     const fullAddress = `${baseAddress}, ${detailAddress}`;
@@ -256,7 +233,8 @@ const EmployeeListTab = ({storeId, refreshEmployees}) => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get(`/api/seller/store/${storeId}/employees`);
+      // 👇 [수정] BASE_URL 추가
+      const response = await axios.get(`${BASE_URL}/api/seller/store/${storeId}/employees`);
       const sortedEmployees = response.data.sort((a, b) => {
         if (a.position === '총괄 관리자') return -1;
         if (b.position === '총괄 관리자') return 1;
@@ -314,9 +292,10 @@ const EmployeeListTab = ({storeId, refreshEmployees}) => {
 
   const confirmDelegateManager = async () => {
     try {
-      await axios.post(`/api/seller/store/${storeId}/employees/delegate`, {newManagerId: selectedIds[0]});
+      // 👇 [수정] BASE_URL 추가
+      await axios.post(`${BASE_URL}/api/seller/store/${storeId}/employees/delegate`, {newManagerId: selectedIds[0]});
       alert('총괄 관리자가 위임되었습니다.');
-      fetchEmployees(); // 목록 새로고침
+      fetchEmployees();
     } catch (error) {
       console.error('Failed to delegate manager:', error);
       alert('총괄 관리자 위임에 실패했습니다.');
@@ -341,7 +320,8 @@ const EmployeeListTab = ({storeId, refreshEmployees}) => {
 
     if (window.confirm(`${selectedCount}명의 직원을 정말 삭제하시겠습니까?`)) {
       try {
-        await axios.post(`/api/seller/store/${storeId}/employees/delete`, {userIds: selectedIds});
+        // 👇 [수정] BASE_URL 추가
+        await axios.post(`${BASE_URL}/api/seller/store/${storeId}/employees/delete`, {userIds: selectedIds});
         alert('삭제되었습니다.');
         fetchEmployees();
       } catch (error) {
@@ -418,7 +398,8 @@ const AddEmployeeTab = ({storeId, onEmployeeAdded}) => {
     setIsSearching(true);
     setSearchResult(null);
     try {
-      const response = await axios.get(`/api/seller/store/${storeId}/employees/search-user`, {
+      // 👇 [수정] BASE_URL 추가
+      const response = await axios.get(`${BASE_URL}/api/seller/store/${storeId}/employees/search-user`, {
         params: {email: emailInput}
       });
       const {userId, name, email, status} = response.data;
@@ -467,7 +448,8 @@ const AddEmployeeTab = ({storeId, onEmployeeAdded}) => {
       return;
     }
     try {
-      await axios.post(`/api/seller/store/${storeId}/employees/add`, {userIds: selectedIds});
+      // 👇 [수정] BASE_URL 추가
+      await axios.post(`${BASE_URL}/api/seller/store/${storeId}/employees/add`, {userIds: selectedIds});
       alert(`${selectedIds.length}명의 직원이 성공적으로 추가되었습니다.`);
       setStagedEmployees([]);
       onEmployeeAdded();
@@ -591,7 +573,8 @@ const StoreManagePage = () => {
   useEffect(() => {
     const fetchStoreName = async () => {
       try {
-        const response = await axios.get(`/api/seller/store/${storeId}`);
+        // 👇 [수정] BASE_URL 추가
+        const response = await axios.get(`${BASE_URL}/api/seller/store/${storeId}`);
         setStoreName(response.data.name);
       } catch (error) {
         console.error("Failed to fetch store name", error);

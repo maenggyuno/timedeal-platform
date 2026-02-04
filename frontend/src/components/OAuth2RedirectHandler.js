@@ -4,6 +4,8 @@ import axios from 'axios';
 
 const REDIRECT_PATH_STORAGE_KEY = 'redirectPathAfterLogin';
 
+const BASE_URL = process.env.REACT_APP_API_URL || '';
+
 const OAuth2RedirectHandler = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -16,7 +18,7 @@ const OAuth2RedirectHandler = () => {
             try {
                 // 백엔드에 현재 사용자 정보 요청 API 호출
                 // const response = await axios.get('http://localhost:8080/api/auth/login', {
-                const response = await axios.get('/api/auth/login', {
+                const response = await axios.get('${BASE_URL}/api/auth/login', {
                     withCredentials: true
                 });
 

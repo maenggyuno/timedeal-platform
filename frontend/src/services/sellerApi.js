@@ -65,3 +65,7 @@ export const adjustProductStock = (storeId, productId, delta) =>
 // 모든 상품의 종합 현황 데이터를 한번에 가져오는 API 함수
 export const fetchProductStatusSummary = (storeId) =>
     api.get(`/seller/stores/${storeId}/products/status-summary`);
+
+
+export const fetchDashboardMarts = () =>
+  api.get('/seller/store/dashboard');

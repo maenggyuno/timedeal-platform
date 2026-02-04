@@ -81,7 +81,7 @@ const MyMartPage = () => {
     (async () => {
       try {
         setLoadingStore(true);
-        const response = await axios.get(`/api/seller/store/${martId}/mymart`);
+        const response = await axios.get(`${BASE_URL}/api/seller/store/${martId}/mymart`);
         const apiData = response.data;
         if (!ignore) {
           const formattedData = {
@@ -113,7 +113,7 @@ const MyMartPage = () => {
       try {
         setLoadingReviews(true);
         setErrorReviews('');
-        const res = await fetch(`/api/seller/store/${martId}/reviews`);
+        const res = await fetch(`${BASE_URL}/api/seller/store/${martId}/reviews`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (!ignore) setReviews(Array.isArray(data) ? data : []);
@@ -132,7 +132,7 @@ const MyMartPage = () => {
     let ignore = false;
     (async () => {
       try {
-        const res = await fetch(`/api/seller/store/${martId}/review-summary`);
+        const res = await fetch(`${BASE_URL}/api/seller/store/${martId}/review-summary`);
         if (!res.ok) return;
         const data = await res.json();
         if (!ignore) setSummary(data);

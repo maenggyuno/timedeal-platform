@@ -6,7 +6,7 @@ import Footer from '../../components/seller/Footer';
 import Sidebar from '../../components/seller/Sidebar';
 
 // const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8080';
-
+const BASE_URL = process.env.REACT_APP_API_URL || '';
 const ReservationManagementPage = () => {
     const { martId } = useParams();
     const navigate = useNavigate();
@@ -30,7 +30,7 @@ const ReservationManagementPage = () => {
         if (!correctedIso.endsWith('Z')) {
             correctedIso += 'Z';
         }
-        
+
         const end = new Date(correctedIso);
         const now = new Date();
         const diff = Math.max(0, end - now);
@@ -57,7 +57,7 @@ const ReservationManagementPage = () => {
         setErr(null);
         try {
             // const res = await fetch(`${API_BASE}/api/seller/${martId}/orders?tab=${tab}`, {
-            const res = await fetch(`/api/seller/${martId}/orders?tab=${tab}`, {
+            const res = await fetch(`${BASE_URL}/api/seller/${martId}/orders?tab=${tab}`, {
                 credentials: 'include',
             });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -83,7 +83,7 @@ const ReservationManagementPage = () => {
         if (!window.confirm('이 예약을 취소하고 재고를 복구할까요?')) return;
         try {
             // const res = await fetch(`${API_BASE}/api/seller/orders/${orderId}/cancel`, {
-            const res = await fetch(`/api/seller/orders/${orderId}/cancel`, {
+            const res = await fetch(`${BASE_URL}/api/seller/orders/${orderId}/cancel`, {
                 method: 'PATCH',
                 credentials: 'include',
             });
@@ -109,8 +109,8 @@ const ReservationManagementPage = () => {
         if (searchQuery.trim() === '') {
             return true;
         }
-        const targetValue = searchType === 'buyerName' 
-            ? row.buyerName 
+        const targetValue = searchType === 'buyerName'
+            ? row.buyerName
             : row.productName;
 
         return targetValue.toLowerCase().includes(searchQuery.toLowerCase().trim());
@@ -145,9 +145,9 @@ const ReservationManagementPage = () => {
                             </button>
                         </div>
                     </div>
-                    
+
                     <div className={styles.searchContainer}>
-                        <select 
+                        <select
                             className={styles.searchSelect}
                             value={searchType}
                             onChange={(e) => setSearchType(e.target.value)}

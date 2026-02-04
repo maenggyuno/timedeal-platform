@@ -5,6 +5,8 @@ import styles from '../../styles/seller/SearchResultsPage.module.css';
 import Header from '../../components/seller/Header';
 import Footer from '../../components/seller/Footer';
 
+const BASE_URL = process.env.REACT_APP_API_URL || '';
+
 const SearchResultsPage = () => {
     const location = useLocation();
     const query = new URLSearchParams(location.search).get('query');
@@ -14,7 +16,7 @@ const SearchResultsPage = () => {
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                const response = await axios.get(`/api/search?query=${encodeURIComponent(query)}`);
+                const response = await axios.get(`${BASE_URL}/api/search?query=${encodeURIComponent(query)}`);
                 setResults(response.data);
             } catch (error) {
                 console.error('검색 중 오류 발생:', error);

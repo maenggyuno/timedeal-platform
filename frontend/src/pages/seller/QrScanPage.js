@@ -8,6 +8,7 @@ import styles from '../../styles/seller/QrScanPage.module.css';
 
 const FRONT_RE = /(front|user|내장|내부|webcam|전면)/i;
 const BACK_RE  = /(back|rear|environment|후면|외부)/i;
+const BASE_URL = process.env.REACT_APP_API_URL || '';
 
 const stopTracksOf = (videoEl) => {
     try {
@@ -83,7 +84,7 @@ const QrScanPage = () => {
     const orderId = useMemo(() => Number(params.get('orderId')), [params]);
 
     const [orderDetails, setOrderDetails] = useState(null);
-    
+
     const [status, setStatus] = useState('ready');
     const [message, setMessage] = useState('카메라 준비됨. QR을 비춰주세요.');
     const [devices, setDevices] = useState([]);
@@ -100,7 +101,7 @@ const QrScanPage = () => {
             try {
                 // GET 요청으로 API 호출
                 // const response = await fetch(`${API_BASE}/api/qrCode/product?orderId=${orderId}`);
-                const response = await fetch(`/api/qrCode/product?orderId=${orderId}`);
+                const response = await fetch(`${BASE_URL}/api/qrCode/product?orderId=${orderId}`);
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status} - 서버에서 데이터를 가져오지 못했습니다.`);
                 }
@@ -114,7 +115,7 @@ const QrScanPage = () => {
 
         fetchOrderDetails();
     }, [orderId]); // orderId가 있을 때 한 번만 실행
-    
+
     const refreshDevices = useCallback(async () => {
         const all = await navigator.mediaDevices.enumerateDevices().catch(() => []);
         const cams = all.filter((d) => d.kind === 'videoinput');
@@ -190,30 +191,30 @@ const QrScanPage = () => {
     };
 
     const sendCheckIn = useCallback(async (uuid) => {
-        if (!orderId) { 
-            setStatus('error'); 
-            setMessage('orderId가 없습니다.'); 
-            lockRef.current = false; 
-            return; 
+        if (!orderId) {
+            setStatus('error');
+            setMessage('orderId가 없습니다.');
+            lockRef.current = false;
+            return;
         }
-        setStatus('sending'); 
+        setStatus('sending');
         setMessage('서버에 판매 확정 요청 중…');
         try {
             // const res = await fetch(`${API_BASE}/api/seller/orders/${orderId}/checkin`, {
-            const res = await fetch(`/api/seller/orders/${orderId}/checkin`, {
+            const res = await fetch(`${BASE_URL}/api/seller/orders/${orderId}/checkin`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ uuid }),
             });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            setStatus('success'); 
+            setStatus('success');
             setMessage('체크인 완료! (판매완료 처리 및 재고차감 완료)');
             setTimeout(() => navigate(`/seller/mart/${martId}/customers`), 900);
         } catch (err) {
-            setStatus('ready'); 
-            setMessage(`체크인 실패: ${err.message}`); 
-            lockRef.current = false; 
+            setStatus('ready');
+            setMessage(`체크인 실패: ${err.message}`);
+            lockRef.current = false;
         }
     }, [orderId, martId, navigate]);
 
@@ -221,15 +222,15 @@ const QrScanPage = () => {
         if (lockRef.current) return;
         const text = result?.getText?.() ?? '';
         const uuid = parseQrText(text);
-        if (!uuid) { 
-            setMessage('QR 코드에서 uuid를 찾을 수 없습니다.'); 
-            return; 
+        if (!uuid) {
+            setMessage('QR 코드에서 uuid를 찾을 수 없습니다.');
+            return;
         }
 
         console.log('스캔된 UUID 값:', uuid);
 
-        lockRef.current = true; 
-        setStatus('scanning'); 
+        lockRef.current = true;
+        setStatus('scanning');
         setMessage(`QR 인식됨 → ${uuid}`);
 
         if (window.confirm('판매확정을 하시겠습니까?')) {
@@ -237,7 +238,7 @@ const QrScanPage = () => {
         } else {
             setStatus('ready');
             setMessage('카메라 준비됨. QR을 비춰주세요.');
-            lockRef.current = false; 
+            lockRef.current = false;
         }
     }, [sendCheckIn]);
 
@@ -281,7 +282,7 @@ const QrScanPage = () => {
                     <Link to={-1} className={styles.backButton}>← 뒤로</Link>
                     <h2 className={styles.title}>QR 스캔 (체크인)</h2>
                 </header>
-                
+
                 <div className={styles.orderInfoContainer}>
                     {orderDetails ? (
                         <>

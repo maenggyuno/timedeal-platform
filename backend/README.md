@@ -440,3 +440,207 @@ free -h    # 메모리 (Swap 확인)
 "No configuration file provided" 에러: docker-compose.yml 파일이 EC2 경로에 없는 것이다. CI/CD의 scp 단계를 확인한다.
 
 .env 파일이 숨겨지므로 ls-al 명령어를 치면 .env 파일이 생성된 것을 확인할 수 있다.
+
+# 🌐 Cloudflare DNS 설정: 프론트엔드 연결 및 회색 구름 전환
+
+메인 도메인은 사용자가 접속하는 얼굴이므로 **AWS CloudFront**에 양보하고, 기존 백엔드 터널은 **`api` 서브도메인**으로 옮겨주는 작업입니다.
+
+### 1. Cloudflare DNS 메뉴 접속
+1. Cloudflare 메인 화면에서 활성화된 **`dongnekok.shop`** 사이트를 클릭합니다.
+2. 왼쪽 사이드바 메뉴에서 **[DNS] -> [Records]**로 들어갑니다.
+
+### 2. 프론트엔드(CloudFront) 레코드 추가
+이미 터널용 레코드가 있다면 해당 레코드를 수정하거나 삭제 후 새로 만드세요.
+
+* **루트 도메인 설정 (`@`):**
+    * **Type:** `CNAME`
+    * **Name:** `@` (또는 `dongnekok.shop` 직접 입력)
+    * **Target:** **AWS CloudFront 주소** (예: `d1234abcd.cloudfront.net`)
+    * **Proxy Status:** 주황색 구름을 클릭하여 **회색 구름(DNS Only)**으로 변경 ☁️
+* **www 도메인 설정 (`www`):**
+    * **Type:** `CNAME`
+    * **Name:** `www`
+    * **Target:** 위와 동일한 CloudFront 주소
+    * **Proxy Status:** **회색 구름(DNS Only)**으로 변경 ☁️
+
+### 3. 백엔드(api) 서브도메인 등록 (터널용)
+백엔드 서버 접속을 위해 `api` 주소를 터널에 할당해야 합니다.
+
+* **Type:** `CNAME`
+* **Name:** `api`
+* **Target:** `<터널ID>.cfargotunnel.com` (또는 터널 생성 시 할당된 주소)
+* **Proxy Status:** **주황색 구름(Proxied)** 권장 (보안 및 DDoS 방어용)
+
+---
+
+## ⚠️ 주의사항: 백엔드 터널 설정 변경
+
+DNS에서 `api` 주소를 만들었다면, **EC2 내부의 `config.yml`** 파일도 함께 수정해줘야 백엔드가 정상 작동합니다.
+
+1. **설정 파일 열기:** `sudo nano /etc/cloudflared/config.yml`
+2. **내용 수정:**
+   ```yaml
+   ingress:
+     - hostname: api.dongnekok.shop  # 기존 메인 도메인에서 api로 변경
+       service: http://localhost:8080
+     - service: http_status:404
+   ```
+3. **재시작:** `sudo systemctl restart cloudflared`
+
+---
+
+## 💡 왜 회색 구름(DNS Only)을 쓰나요?
+* **SSL 인증서 충돌 방지:** AWS CloudFront에서 이미 SSL(ACM)을 사용 중인 경우, Cloudflare의 프록시(주황 구름)와 설정이 꼬여 "Too many redirects" 에러가 날 수 있습니다.
+* **속도:** DNS 해석만 Cloudflare가 담당하고, 실제 데이터 전송은 AWS 인프라를 직접 타게 되어 더 깔끔한 연결이 가능합니다.
+
+
+
+## 🚇 Infrastructure: Cloudflare Tunnel Setup
+
+보안 강화를 위해 외부에서 EC2의 포트(8080)를 직접 열지 않고, **Cloudflare Tunnel**을 통해 안전하게 연결했습니다.
+Nginx를 사용하지 않고도 HTTPS(SSL)가 자동 적용되며, 실제 서버 IP를 숨길 수 있는 아키텍처입니다.
+
+### 1. Architecture
+* **Host (EC2 Ubuntu):** `cloudflared` 데몬이 실행되어 외부 트래픽을 수신.
+* **Container (Docker):** Spring Boot 애플리케이션이 `8080` 포트로 실행 중.
+* **Connection:** Tunnel이 `localhost:8080`으로 트래픽을 포워딩.
+
+### 2. Installation (Ubuntu)
+EC2 호스트(Root) 환경에 직접 설치하여 Docker 컨테이너와의 의존성을 분리했습니다.
+
+```bash
+# 1. 설치 파일 다운로드 (.deb)
+wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+
+# 2. 패키지 설치
+sudo dpkg -i cloudflared-linux-amd64.deb
+```
+
+### 3. Authentication & Setup
+Cloudflare 계정과 서버를 연동하는 과정입니다.
+
+```bash
+# 1. 로그인 (URL을 로컬 브라우저에 복사하여 인증)
+cloudflared tunnel login
+
+# 2. 터널 생성 (이름: shop) -> UUID 생성됨
+cloudflared tunnel create shop
+
+# 3. DNS 라우팅 연결 (CNAME 자동 설정)
+cloudflared tunnel route dns shop dongnekok.shop
+```
+
+### 4. Configuration (`config.yml`)
+터널이 트래픽을 어디로 보낼지 정의합니다.
+* **Path:** `/home/ubuntu/.cloudflared/config.yml`
+
+```yaml
+tunnel: <Generated-UUID>
+credentials-file: /home/ubuntu/.cloudflared/<Generated-UUID>.json
+
+ingress:
+  # 1. 메인 트래픽 -> 로컬 도커 컨테이너로 전달
+  - hostname: dongnekok.shop
+    service: http://localhost:8080
+
+  # 2. 정의되지 않은 규칙은 404 처리
+  - service: http_status:404
+```
+
+### 5. Execution
+터널을 실행하여 외부 접속을 활성화합니다.
+
+```bash
+cloudflared tunnel run shop
+```
+
+
+# 🚀 Cloudflare Tunnel 자동화 및 서버 안정화 가이드 (Systemd Service)
+
+단순 명령어 실행(`run`) 방식에서 벗어나, 서버 재부팅 시에도 자동으로 터널이 복구되는 **시스템 서비스(Systemd)** 등록 과정을 정리합니다. 이를 통해 'TimeDeal' 플랫폼의 24시간 무중단 운영 환경을 구축했습니다.
+
+---
+
+## 1. 개요: 왜 서비스 등록이 필요한가?
+* **지속성**: 터미널 세션이 종료되어도 백그라운드에서 터널이 상주합니다.
+* **자동 복구**: 서버 에러나 재부팅 발생 시 시스템이 자동으로 터널 프로세스를 다시 실행합니다.
+* **전문성**: 수동 실행보다 운영 안정성이 높아 실제 배포 환경에 적합한 정석적인 방식입니다.
+
+---
+
+## 2. 터널 서비스 자동화 절차
+
+`cloudflared`는 보안 및 시스템 권한 관리를 위해 `/etc/cloudflared` 경로를 기본 설정 저장소로 사용합니다.
+
+### ① 시스템 설정 폴더 생성 및 파일 이관
+사용자 홈 디렉토리에 있는 설정 파일들을 시스템 공용 폴더로 복사합니다.
+```bash
+# 시스템 설정 폴더 생성
+sudo mkdir -p /etc/cloudflared
+
+# 기존 설정 파일(.yml) 및 인증 키(.json) 복사
+sudo cp ~/.cloudflared/config.yml /etc/cloudflared/
+sudo cp ~/.cloudflared/*.json /etc/cloudflared/
+```
+
+### ② 터널 서비스(Unit) 설치
+시스템이 터널을 서비스로 인식하도록 설치 명령을 실행합니다.
+```bash
+# 시스템 서비스로 정식 등록
+sudo cloudflared service install
+```
+
+### ③ 서비스 활성화 및 상태 관리
+```bash
+# 서비스 시작 및 부팅 시 자동 시작 설정
+sudo systemctl start cloudflared
+sudo systemctl enable cloudflared
+
+# 실행 상태 확인 (Active: active (running) 확인 필수)
+sudo systemctl status cloudflared
+```
+
+### 6. Verification (Troubleshooting)
+배포 초기 접근 시 아래와 같은 에러 코드를 통해 정상 작동을 확인했습니다.
+
+* **Status 404 (Whitelabel Error Page):** Spring Boot 서버가 정상적으로 실행되어 응답함. (메인 루트 경로 매핑 부재)
+* **Status 401 (Unauthorized):** Spring Security가 정상 작동하여 인증되지 않은 요청을 차단함.
+* **Result:** 인프라 연결 및 백엔드 보안 설정이 정상적으로 완료됨을 확인.
+
+## 🌿 Git 브랜치 생성 및 전환 명령어
+
+### 1. 가장 많이 사용하는 명령어 (전통적 방식)
+브랜치를 생성함과 동시에 해당 브랜치로 바로 이동합니다.
+```bash
+git checkout -b [브랜치-이름]
+```
+> **예시:** `git checkout -b feat/api-connection-test`
+
+### 2. 최신 권장 방식 (Git 2.23 이상)
+`checkout` 명령어가 기능이 너무 많아 분리된 최신 명령어입니다. 가독성이 더 좋아 권장됩니다.
+```bash
+git switch -c [브랜치-이름]
+```
+* `-c`는 'create'의 약자로, 브랜치를 만들면서(create) 동시에 이동(switch)하겠다는 뜻입니다.
+
+---
+
+### 3. 브랜치 이름 추천 (관례)
+졸업 작품이나 실제 협업에서는 보통 아래와 같은 규칙(Prefix)을 붙여서 이름을 만듭니다.
+
+| 접두어(Prefix) | 용도 | 예시 |
+| :--- | :--- | :--- |
+| **`feat/`** | 새로운 기능 추가 시 | `feat/api-test-controller` |
+| **`fix/`** | 버그나 오류 수정 시 | `fix/cors-policy` |
+| **`env/`** | 환경 변수나 설정 파일 변경 시 | `env/add-env-file` |
+| **`refactor/`** | 코드 리팩토링 시 | `refactor/api-call-logic` |
+
+---
+
+### 4. 브랜치 생성 후 작업 흐름 (Quick Sheet)
+1. **브랜치 생성 및 이동**: `git switch -c feat/test-api`
+2. **코드 수정**: 아까 드린 스프링 부트 테스트 코드 작성
+3. **변경 사항 확인**: `git status`
+4. **스테이징**: `git add .`
+5. **커밋**: `git commit -m "feat: 테스트용 API 컨트롤러 및 유닛 테스트 추가"`
+6. **푸시**: `git push origin feat/test-api`

@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
 import styles from '../../styles/seller/Header.module.css';
 import { useAuth } from '../../contexts/AuthContext';
-import loginApi from '../../services/loginApi'; // axios 인스턴스 파일 경로에 맞게 수정해주세요.
+import axiosConfig from '../../services/axiosConfig'; // axios 인스턴스 파일 경로에 맞게 수정해주세요.
 
 const Header = () => {
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ const Header = () => {
     const handleLogoutClick = async () => {
         try {
             // 백엔드에 로그아웃 요청을 보내 서버 측 쿠키 삭제를 시도
-            await loginApi.post('/api/auth/logout');
+            await axiosConfig.post('/api/auth/logout');
         } catch (error) {
             console.error('Logout API call failed, but proceeding with client-side logout:', error);
         } finally {
@@ -43,13 +43,13 @@ const Header = () => {
                         로그아웃
                     </button>
                 </div>
-                
+
             ) : (
                 <div className={styles.rightSection}>
 
                 </div>
             )}
-            
+
         </header>
     );
 };

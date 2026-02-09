@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import styles from '../../styles/seller/MyMartPage.module.css';
 import Header from '../../components/seller/Header';
 import Footer from '../../components/seller/Footer';
 import NaverMapService from '../../components/buyer/map_location_page/NaverMapService';
 import Sidebar from '../../components/seller/Sidebar';
-
-const BASE_URL = process.env.REACT_APP_API_URL || '';
+import api from '../../services/axiosConfig'; // ✅ axiosConfig 임포트
 
 const maskName = (name = '') => {
   const s = name.trim();
@@ -83,7 +81,8 @@ const MyMartPage = () => {
     (async () => {
       try {
         setLoadingStore(true);
-        const response = await axios.get(`${BASE_URL}/api/seller/store/${martId}/mymart`);
+        // ✅ [Refactor] axios -> api
+        const response = await api.get(`/api/seller/store/${martId}/mymart`);
         const apiData = response.data;
         if (!ignore) {
           const formattedData = {
@@ -115,9 +114,9 @@ const MyMartPage = () => {
       try {
         setLoadingReviews(true);
         setErrorReviews('');
-        const res = await fetch(`${BASE_URL}/api/seller/store/${martId}/reviews`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        // ✅ [Refactor] fetch -> api.get
+        const res = await api.get(`/api/seller/store/${martId}/reviews`);
+        const data = res.data;
         if (!ignore) setReviews(Array.isArray(data) ? data : []);
       } catch (e) {
         if (!ignore) setErrorReviews('리뷰를 불러오지 못했습니다.');
@@ -134,9 +133,9 @@ const MyMartPage = () => {
     let ignore = false;
     (async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/seller/store/${martId}/review-summary`);
-        if (!res.ok) return;
-        const data = await res.json();
+        // ✅ [Refactor] fetch -> api.get
+        const res = await api.get(`/api/seller/store/${martId}/review-summary`);
+        const data = res.data;
         if (!ignore) setSummary(data);
       } catch {}
     })();
@@ -159,14 +158,12 @@ const MyMartPage = () => {
             center: storeLocation,
             zoom: 17,
             zoomControl: false,
-
-            // --- 지도 상호작용 비활성화 옵션 ---
-            draggable: false,              // 마우스 드래그 및 터치 이동 비활성화
-            pinchZoom: false,              // 두 손가락 줌 비활성화
-            scrollWheel: false,            // 마우스 휠 줌 비활성화
-            keyboardShortcuts: false,      // 키보드 단축키 비활성화
-            disableDoubleTapZoom: true,    // 더블탭 줌 비활성화
-            disableDoubleClickZoom: true,  // 더블클릭 줌 비활성화
+            draggable: false,
+            pinchZoom: false,
+            scrollWheel: false,
+            keyboardShortcuts: false,
+            disableDoubleTapZoom: true,
+            disableDoubleClickZoom: true,
           });
         } else {
           mapInstanceRef.current.panTo(storeLocation, { duration: 500 });

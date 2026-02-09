@@ -1,6 +1,6 @@
 import {React, useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import loginApi from '../../services/loginApi';
+import axiosConfig from '../../services/axiosConfig';
 import { useAuth } from '../../contexts/AuthContext';
 import LoginModal from './LoginModal';
 import { BiCategory } from "react-icons/bi";
@@ -148,7 +148,7 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await loginApi.post('/api/auth/logout');
+            await axiosConfig.post('/api/auth/logout');
             console.log("Logout request sent to server.");
         } catch (error) {
             console.error('Logout API call failed, but proceeding with client-side logout:', error);
@@ -228,7 +228,7 @@ const Header = () => {
                 </nav>
             </div>
             <hr className={headerStyles["header-hr"]}></hr>
-            
+
             {isLoginModalOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
         </header>
     );

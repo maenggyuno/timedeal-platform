@@ -6,6 +6,7 @@ import Footer from '../../components/seller/Footer';
 import Header from '../../components/seller/Header';
 import Sidebar from '../../components/seller/Sidebar';
 
+
 const ProductRegistrationPage = () => {
   const navigate = useNavigate();
   const { martId } = useParams();

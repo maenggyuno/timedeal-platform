@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import loginApi from '../services/loginApi'; 
+import api from '../services/axiosConfig';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -12,12 +12,12 @@ const AuthCallback = () => {
       return;
     }
     hasProcessed.current = true;
-    
+
     const processLogin = async () => {
       try {
           // 로그인 확인 API 호출
           // 성공 시 AuthProvider가 자동으로 상태를 업데이트
-          await loginApi.get('/api/auth/login');
+          await api.get('/api/auth/login');
       } catch (error) {
           // 에러가 발생해도 AuthProvider가 user 상태를 null로 유지
           console.error('AuthCallback: Login check failed.', error);

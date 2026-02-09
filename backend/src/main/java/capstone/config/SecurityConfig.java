@@ -270,8 +270,8 @@ public class SecurityConfig {
                 .requestMatchers(
                     // 건들면 X
                     "/",
-                    "/api/oauth2/authorization/**",
-                    "/api/auth/**",
+                    "/oauth2/authorization/**",
+                    "/auth/**",
                     "/api/login/oauth2/code/**",    // 콜백 경로도 허용
                     "/error",
                     "/favicon.ico",
@@ -308,17 +308,6 @@ public class SecurityConfig {
             )
 
             .oauth2Login(oauth2 -> oauth2
-
-                // 1. 로그인 시작 주소 설정 (authorizationEndpoint)
-                // 기본값 /oauth2/authorization/{registrationId} -> /api/oauth2/authorization/{registrationId}
-                .authorizationEndpoint(authorization -> authorization
-                    .baseUri("/api/oauth2/authorization")
-                )
-                // 2. 네이버가 인증코드를 보내줄 도착지 주소 설정 (redirectionEndpoint)
-                // 기본값 /login/oauth2/code/{registrationId} -> /api/login/oauth2/code/*
-                .redirectionEndpoint(redirection -> redirection
-                    .baseUri("/api/login/oauth2/code/*")
-                )
                 .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 .successHandler(oAuth2LoginSuccessHandler)
                 .failureHandler(oAuth2LoginFailureHandler)

@@ -13,7 +13,7 @@ const LoginPage = () => {
   // 환경 변수에서 베이스 URL을 가져옵니다.
   // 없으면 기본값으로 상대 경로를 사용하도록 설정합니다.
   const BASE_URL = process.env.REACT_APP_BACKEND_URL || '';
-
+  //이 주소는 백엔드로 넘기는게 아니라 프론트엔드 화면으로 이동하는 것임 따라서 /api를 붙이면 nginx가 백엔드로 넘기게 되어서 오류남
   const GOOGLE_LOGIN_URL = `${BASE_URL}/oauth2/authorization/google`;
   const NAVER_LOGIN_URL = `${BASE_URL}/oauth2/authorization/naver`;
 

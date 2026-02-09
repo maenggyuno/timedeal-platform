@@ -9,7 +9,7 @@ const BASE_URL = api.defaults.baseURL;
 const LoginModal = ({onClose}) => {
   // const GOOGLE_AUTH_URL = 'http://localhost:8080/oauth2/authorization/google';
   // const NAVER_AUTH_URL = 'http://localhost:8080/oauth2/authorization/naver';
-// 👇 3. [중요] '/api' 제거하고, 절대 경로로 생성!
+  // 👇 3. [중요] '/api' 제거하고, 절대 경로로 생성!
   const GOOGLE_AUTH_URL = `${BASE_URL}/oauth2/authorization/google`;
   const NAVER_AUTH_URL = `${BASE_URL}/oauth2/authorization/naver`;
 

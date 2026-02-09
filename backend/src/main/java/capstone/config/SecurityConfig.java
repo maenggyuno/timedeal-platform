@@ -272,6 +272,7 @@ public class SecurityConfig {
                     "/",
                     "/oauth2/authorization/**",
                     "/auth/**",
+                    "/api/auth/**",
                     "/login/oauth2/code/**",    // 콜백 경로도 허용
                     "/login/**",
                     "/error",

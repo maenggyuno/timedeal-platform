@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import apiClient from '../services/loginApi';
+
+import api from "../services/axiosConfig";
 
 const AuthContext = createContext(null);
 
@@ -12,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                const response = await apiClient.get('/api/auth/login');
+                const response = await api.get('/api/auth/login');
                 if (response.status === 200 && response.data) {
                     // response.data 객체 전체를 user 상태에 저장
                     setUser(response.data);

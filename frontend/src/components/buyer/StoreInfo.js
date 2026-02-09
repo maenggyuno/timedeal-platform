@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ProductInfoStyles from '../../styles/buyer/ProductInfo.module.css';
 import { useAuth } from '../../contexts/AuthContext';
-import loginApi from '../../services/loginApi'; 
+import axiosConfig from '../../services/axiosConfig';
 
 const StoreInfo = ({ store, onShowMap }) => {
   const { isLoggedIn } = useAuth();
-  
+
   const [isFollowing, setIsFollowing] = useState(store?.isFollowing || false);
   const [followerCount, setFollowerCount] = useState(store?.followersAmount || 0);
 
@@ -32,12 +32,12 @@ const StoreInfo = ({ store, onShowMap }) => {
     setIsFollowing(!originalIsFollowing);
     setFollowerCount(prevCount => originalIsFollowing ? prevCount - 1 : prevCount + 1);
 
-    const endpoint = originalIsFollowing 
-      ? `/api/buyer/stores/unfollowStore/${store.storeId}` 
+    const endpoint = originalIsFollowing
+      ? `/api/buyer/stores/unfollowStore/${store.storeId}`
       : `/api/buyer/stores/followStore/${store.storeId}`;
 
     try {
-      await loginApi.post(endpoint);
+      await axiosConfig.post(endpoint);
     } catch (error) {
       console.error('Follow/Unfollow 요청 실패:', error);
       alert('요청에 실패했습니다. 다시 시도해주세요.');
@@ -53,7 +53,7 @@ const StoreInfo = ({ store, onShowMap }) => {
         <div className={ProductInfoStyles["store-main-content"]}>
           <div className={ProductInfoStyles["store-header"]}>
             <p className={ProductInfoStyles["store-name"]}>{store.name}</p>
-            
+
             {isLoggedIn && (
               <button
                 className={ProductInfoStyles["follow-btn"]}
@@ -64,7 +64,7 @@ const StoreInfo = ({ store, onShowMap }) => {
               </button>
             )}
           </div>
-          
+
           <p className={ProductInfoStyles["store-stats"]}>
             평점 {formattedRating} · 팔로워 {followerCount} · 후기 {store.reviewsAmount}
           </p>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ProductInfoStyles from '../../styles/buyer/ProductInfo.module.css';
 import PaymentModal from './PaymentModal';
 import { useAuth } from '../../contexts/AuthContext';
-import loginApi from '../../services/loginApi';
+import axiosConfig from '../../services/axiosConfig';
 
 const formatDate = (dateString) => {
     if (!dateString) return '알 수 없음';
@@ -17,7 +17,7 @@ const ProductInfo = ({ product }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
     const [selectedQuantity, setSelectedQuantity] = useState(1);
-    
+
     const { isLoggedIn } = useAuth();
 
     if (!product) {
@@ -66,7 +66,7 @@ const ProductInfo = ({ product }) => {
 
         setIsAdding(true);
         try {
-            await loginApi.post('/api/buyer/carts/addCart', {
+            await axiosConfig.post('/api/buyer/carts/addCart', {
                 productId: product.productId,
                 quantity: Number(selectedQuantity),
             });

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/seller/Main_Button.module.css';
 import Header from '../../components/seller/Header';
 import Footer from '../../components/seller/Footer';
+import api from '../../services/axiosConfig'; // ✅ axiosConfig 임포트
 
 const Main_StoreCreatePage = () => {
   // --- 상태 관리 ---
@@ -24,10 +25,6 @@ const Main_StoreCreatePage = () => {
 
   const navigate = useNavigate();
   const detailAddressRef = useRef(null);
-  const tokenCache = useRef({ token: null, exp: 0 });
-
-  // 👇 [전역 변수] 대문자로 통일하고 맨 위에 선언!
-  const BASE_URL = process.env.REACT_APP_API_URL || '';
 
   // --- 스크립트 로드 ---
   useEffect(() => {
@@ -37,63 +34,14 @@ const Main_StoreCreatePage = () => {
     document.head.appendChild(script);
     return () => { document.head.removeChild(script); };
   }, []);
-  //
-  // // --- API 및 유틸리티 함수 ---
-  // const getSgisToken = async () => {
-  //   const now = Date.now();
-  //   if (tokenCache.current.token && now < tokenCache.current.exp) {
-  //     return tokenCache.current.token;
-  //   }
-  //   if (!SGIS_KEY || !SGIS_SECRET) {
-  //     setMessage('SGIS API 키가 설정되지 않았습니다.');
-  //     throw new Error('SGIS KEY/SECRET is not set');
-  //   }
-  //   const url = `${BASE_URL}/OpenAPI3/auth/authentication.json?consumer_key=${SGIS_KEY}&consumer_secret=${SGIS_SECRET}`;
-  //   const res = await fetch(url);
-  //   const data = await res.json();
-  //   if (data.errCd !== 0 || !data?.result?.accessToken) {
-  //     throw new Error(`SGIS 인증 실패: ${data.errMsg || '토큰 없음'}`);
-  //   }
-  //   const token = data.result.accessToken;
-  //   tokenCache.current = { token, exp: now + 25 * 60 * 1000 };
-  //   return token;
-  // };
-  //
-  // const geocodeWGS84 = async (addr, retried = false) => {
-  //   try {
-  //     const token = await getSgisToken();
-  //     const url =
-  //       `${BASE_URL}/OpenAPI3/addr/geocodewgs84.json` +
-  //       `?accessToken=${encodeURIComponent(token)}` +
-  //       `&address=${encodeURIComponent(addr)}`;
-  //     const res = await fetch(url);
-  //     const data = await res.json();
-  //     if (data.errCd !== 0) {
-  //       if (data.errCd === -401 && !retried) {
-  //         tokenCache.current = { token: null, exp: 0 };
-  //         return geocodeWGS84(addr, true);
-  //       }
-  //       console.warn('[SGIS Geocoding Error]', data.errMsg);
-  //       return null;
-  //     }
-  //     const firstResult = data?.result?.resultdata?.[0];
-  //     return firstResult ? { lat: String(firstResult.y), lng: String(firstResult.x) } : null;
-  //   } catch (error) {
-  //     console.error("Geocoding failed", error);
-  //     throw error;
-  //   }
-  // };
-// [삭제] const getSgisToken = ... (이제 필요 없음!)
 
-// [수정] 백엔드한테 "좌표 줘" 한 마디만 하면 끝
+  // [수정] 백엔드한테 "좌표 줘" 한 마디만 하면 끝
   const geocodeWGS84 = async (addr) => {
     try {
-      // 1. 토큰? 키값? 다 필요 없음. 그냥 주소만 백엔드로 던짐.
-      // 백엔드 주소: /api/sgis/geocode (아까 만든 Controller)
-      const url = `${BASE_URL}/api/sgis/geocode?address=${encodeURIComponent(addr)}`;
-
-      const res = await fetch(url);
-      const data = await res.json();
+      const response = await api.get('/api/sgis/geocode', {
+        params: { address: addr }
+      });
+      const data = response.data;
 
       // 2. 에러 처리
       if (data.errCd && data.errCd !== 0) {
@@ -110,7 +58,6 @@ const Main_StoreCreatePage = () => {
       throw error; // 필요하면 에러 다시 던지기
     }
   };
-
 
   useEffect(() => {
     const combinedAddress = baseAddress ? `${baseAddress}, ${detailAddress}` : '';
@@ -155,7 +102,7 @@ const Main_StoreCreatePage = () => {
     const { value } = e.target;
     const onlyNums = value.replace(/[^0-9]/g, '');
     if (onlyNums.length <= 10) {
-        setBusinessNumber(onlyNums);
+      setBusinessNumber(onlyNums);
     }
   };
 
@@ -174,9 +121,13 @@ const Main_StoreCreatePage = () => {
     }
     try {
       setBizCheckState('checking');
-      const res = await fetch(`${BASE_URL}/api/seller/tax/biz-status?bno=${cleanedBno}`);
-      if (!res.ok) throw new Error(`API 오류(${res.status})`);
-      const data = await res.json();
+
+      // ✅ [Refactor] fetch -> api.get 변경
+      const res = await api.get('/api/seller/tax/biz-status', {
+        params: { bno: cleanedBno }
+      });
+
+      const data = res.data;
       const item = data?.data?.[0];
       if (!item) {
         alert('조회에 실패했습니다. 잠시 후 다시 시도하세요.');
@@ -223,21 +174,11 @@ const Main_StoreCreatePage = () => {
       payment_method: paymentMethod,
     };
     try {
-      const res = await fetch(`${BASE_URL}/api/seller/store/create`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`매장 등록 실패 (${res.status}): ${errText}`);
-      }
-      const createdStore = await res.json();
-      navigate('/seller/dashboard', { state: { successMessage: `'${createdStore.name}' 매장이 성공적으로 등록되었습니다.` } });
+      const response = await api.post('/api/seller/store/create', payload);
+      navigate('/seller/dashboard');
     } catch (err) {
       console.error(err);
-      setMessage(err.message || '서버 통신 중 오류가 발생했습니다.');
+      setMessage(err.response?.data?.message || err.message || '서버 통신 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
     }

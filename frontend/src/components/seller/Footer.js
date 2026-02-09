@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../../styles/seller/Footer.module.css';
+import {Link} from "react-router-dom";
 
 const Footer = () => {
     return (
@@ -34,10 +35,10 @@ const Footer = () => {
                     <div className={styles.contactNumber}>031-670-5114</div>
                     <div className={styles.serviceTime}>운영시간 9시 - 18시 (주말/공휴일 휴무, 점심시간 12시 - 13시)</div>
                     <div className={styles.actionBlock}>
-                         <a href="/buyer" className={styles.actionButton}>
+                         <Link to="/buyer" className={styles.actionButton}>
                             구매자 센터 이동하기
                             <span className={styles.arrowIcon}>→</span>
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

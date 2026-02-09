@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 const NaverMapService = {
     /**
      * 특정 좌표 주변의 상점 정보를 백엔드로부터 가져옵니다.
@@ -10,7 +11,7 @@ const NaverMapService = {
     fetchNearbyStores: async (lat, lng) => {
         try {
             // /api/buyer/maps/nearby 엔드포인트에 lat, lng 파라미터를 전달합니다.
-            const response = await axios.get(`/api/buyer/maps/nearbyStores?lat=${lat}&lng=${lng}`);
+            const response = await axios.get(`${BASE_URL}/api/buyer/maps/nearbyStores?lat=${lat}&lng=${lng}`);
             return response.data;
         } catch (error) {
             console.error("주변 상점 정보를 불러오는데 실패했습니다.", error);

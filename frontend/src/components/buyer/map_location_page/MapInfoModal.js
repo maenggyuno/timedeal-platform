@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import axios from 'axios';
+import axiosConfig from '../../../services/axiosConfig';
 import mapInfoModalStyles from '../../../styles/buyer/MapInfoModal.module.css';
 import ModalProductItem from './ModalProductItem';
 
@@ -19,7 +19,7 @@ const MapInfoModal = ({ isOpen, onClose, locationInfo }) => {
         setIsLoading(true);
         setError(null);
 
-        axios.get(`/api/buyer/products/${locationInfo.storeId}/products?page=${pageNum}&size=${PRODUCTS_PER_PAGE}`)
+        axiosConfig().get(`/api/buyer/products/${locationInfo.storeId}/products?page=${pageNum}&size=${PRODUCTS_PER_PAGE}`)
             .then(response => {
                 const newProducts = response.data;
                 setProducts(prev => pageNum === 0 ? newProducts : [...prev, ...newProducts]);
@@ -33,7 +33,7 @@ const MapInfoModal = ({ isOpen, onClose, locationInfo }) => {
                 setIsLoading(false);
             });
     }, [locationInfo?.storeId]);
-    
+
     useEffect(() => {
         if (isOpen) {
             // 모달이 열릴 때 상태 초기화 및 첫 페이지 로드
@@ -51,7 +51,7 @@ const MapInfoModal = ({ isOpen, onClose, locationInfo }) => {
     };
 
     if (!isOpen) return null;
-    
+
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
             onClose();
@@ -69,11 +69,11 @@ const MapInfoModal = ({ isOpen, onClose, locationInfo }) => {
                     <div className={mapInfoModalStyles["info-item"]}><strong>주소:</strong><p>{locationInfo.address}</p></div>
                     <div className={mapInfoModalStyles["info-item"]}><strong>연락처:</strong><p>{locationInfo.phoneNumber}</p></div>
                     <div className={mapInfoModalStyles["info-item"]}><strong>영업시간:</strong><p>{locationInfo.businessHours}</p></div>
-                    
+
                     <hr className={mapInfoModalStyles["divider"]} />
 
                     <h3 className={mapInfoModalStyles["products-title"]}>판매중인 상품</h3>
-                    
+
                     <div className={mapInfoModalStyles["modal-product-grid"]}>
                         {products.map(product => (
                             <ModalProductItem key={product.productId} product={product} />
@@ -83,7 +83,7 @@ const MapInfoModal = ({ isOpen, onClose, locationInfo }) => {
                     {isLoading && <p className={mapInfoModalStyles["loading-text"]}>상품 목록을 불러오는 중...</p>}
                     {error && <p className={mapInfoModalStyles["error-text"]}>{error}</p>}
                     {!isLoading && !error && products.length === 0 && <p className={mapInfoModalStyles["loading-text"]}>판매중인 상품이 없습니다.</p>}
-                    
+
                     {hasMore && !isLoading && (
                         <div className={mapInfoModalStyles["more-button-container"]}>
                             <button

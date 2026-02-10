@@ -644,3 +644,11 @@ git switch -c [브랜치-이름]
 4. **스테이징**: `git add .`
 5. **커밋**: `git commit -m "feat: 테스트용 API 컨트롤러 및 유닛 테스트 추가"`
 6. **푸시**: `git push origin feat/test-api`
+7. **메인 브랜치로 이동 (checkout 또는 switch)** `git checkout main`
+8. **깃허브에 합쳐진 최신 코드 당겨오기 (동기화) -> ★가장 중요★** `git pull origin main`
+
+### 5. 아까 작업하던 브랜치로 이동
+`git checkout fix/infra-api-standardization`
+
+### 6. 최신화된 메인 브랜치 내용을 내 작업 브랜치로 가져오기 (동기화) - 작업 하던 브랜치에서 재 진행
+`git merge main`

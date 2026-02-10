@@ -48,4 +48,16 @@ api.interceptors.response.use(
   }
 );
 
+// 👇 [현업 꿀팁] 요청 보낼 때마다 토큰 있으면 자동으로 헤더에 껴주는 '인터셉터'
+axiosConfig.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 export default api;

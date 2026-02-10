@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosConfig from '../../services/axiosConfig';
 import Header from '../../components/buyer/Header';
 import Footer from '../../components/buyer/Footer';
 import PurchaseStatus from '../../components/buyer/purchase_page/PurchaseStatus';
@@ -28,9 +28,7 @@ const PurchasePage = () => {
       setIsLoading(true);
       setError(null);
       setItems([]);
-      const response = await axios.get(endpoint, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
+      const response = await axiosConfig.get(endpoint);
       setItems(response.data);
     } catch (err) {
       setError('데이터를 불러오는 데 실패했습니다.');
@@ -58,12 +56,12 @@ const PurchasePage = () => {
   const handleOpenStoreModal = (item) => {
     if (item.storeIsDeleted) {
       alert('현재 상점은 폐쇄되었습니다.');
-      return; 
+      return;
     }
     setSelectedStore({ storeId: item.storeId, name: item.storeName || item.name, address: item.storeAddress || item.address });
     setIsStoreModalOpen(true);
   };
-  
+
   const handleCloseStoreModal = () => setIsStoreModalOpen(false);
 
   const handleWriteReview = (orderId) => {
@@ -74,9 +72,7 @@ const PurchasePage = () => {
 
   const handleCheckReview = async (orderId) => {
     try {
-      const response = await axios.get(`/api/buyer/review/${orderId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
+      const response = await axiosConfig.get(`/api/buyer/review/${orderId}`);
       setReviewModalMode('view');
       setSelectedReviewData({ orderId, ...response.data });
       setIsReviewModalOpen(true);
@@ -99,9 +95,7 @@ const PurchasePage = () => {
       return;
     }
     try {
-      const response = await axios.post(`/api/buyer/order/valid-until-extension?orderId=${orderId}`, null, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
+      const response = await axiosConfig.post(`/api/buyer/order/valid-until-extension?orderId=${orderId}`);
       alert(response.data);
       reloadPurchasingItems();
     } catch (error) {
@@ -112,9 +106,7 @@ const PurchasePage = () => {
 
   const handleCheckQrCode = async (orderId) => {
     try {
-      const response = await axios.get(`/api/qrCode/get?orderId=${orderId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
+      const response = await axiosConfig.get(`/api/qrCode/get?orderId=${orderId}`);
       setSelectedQrData(response.data);
       setIsQrModalOpen(true);
     } catch (err) {
@@ -122,7 +114,7 @@ const PurchasePage = () => {
       alert("QR 코드를 불러오는 데 실패했습니다.");
     }
   };
-  
+
   const handleCloseQrModal = () => setIsQrModalOpen(false);
 
   const handleCancelOrder = async (orderId) => {
@@ -130,9 +122,7 @@ const PurchasePage = () => {
       return;
     }
     try {
-      const response = await axios.post(`/api/buyer/order/cancel?orderId=${orderId}`, null, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
+      const response = await axiosConfig.post(`/api/buyer/order/cancel?orderId=${orderId}`);
       alert(response.data);
       reloadPurchasingItems();
     } catch (error) {
@@ -145,10 +135,10 @@ const PurchasePage = () => {
     <div className={styles.container}>
       <Header />
       <main className={styles.main}>
-        <PurchaseStatus 
-          activeTab={activeTab} 
-          onTabChange={handleTabChange} 
-          purchasingItems={purchasingItems} 
+        <PurchaseStatus
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          purchasingItems={purchasingItems}
           completedItems={completedItems}
           expiredItems={expiredItems}
           onStoreClick={handleOpenStoreModal}
@@ -161,9 +151,9 @@ const PurchasePage = () => {
           error={error}
         />
       </main>
-      
+
       {isStoreModalOpen && (
-        <StoreLocationModal 
+        <StoreLocationModal
           isOpen={isStoreModalOpen}
           onClose={handleCloseStoreModal}
           storeId={selectedStore.storeId}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // API 호출을 위해 axios import
+import axiosConfig from '../../../services/axiosConfig';
 import NaverMap from './NaverMap';
 import mapInfoModalStyles from '../../../styles/buyer/MapInfoModal.module.css';
 
@@ -16,7 +16,7 @@ const StoreLocationModal = ({ isOpen, onClose, storeId, storeName, storeAddress 
             setError(null);
             setLocation(null);
 
-            axios.get(`/api/buyer/maps/${storeId}`)
+            axiosConfig().get(`/api/buyer/maps/${storeId}`)
                 .then(response => {
                     setLocation(response.data);
                 })

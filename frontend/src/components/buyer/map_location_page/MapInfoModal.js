@@ -19,7 +19,7 @@ const MapInfoModal = ({ isOpen, onClose, locationInfo }) => {
         setIsLoading(true);
         setError(null);
 
-        axiosConfig().get(`/api/buyer/products/${locationInfo.storeId}/products?page=${pageNum}&size=${PRODUCTS_PER_PAGE}`)
+        axiosConfig.get(`/api/buyer/products/${locationInfo.storeId}/products?page=${pageNum}&size=${PRODUCTS_PER_PAGE}`)
             .then(response => {
                 const newProducts = response.data;
                 setProducts(prev => pageNum === 0 ? newProducts : [...prev, ...newProducts]);

@@ -5,7 +5,7 @@ import CartItem from '../../components/buyer/CartItem';
 import styles from '../../styles/buyer/Cart.module.css';
 import StoreLocationModal from '../../components/buyer/product_info_store_location/StoreLocationModal';
 import CartPaymentModal from '../../components/buyer/CartPaymentModal';
-import axiosConfig from "../../services/axiosConfig";
+import axiosInstance from "../../services/axiosConfig";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);

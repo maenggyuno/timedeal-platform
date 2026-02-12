@@ -1,17 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import HomeProductItem from './HomeProductItem';
 import ProductStyles from '../../../styles/buyer/Product.module.css';
 import UseGeoLocation from '../UseGeoLocation';
+import axiosInstance from '../../../services/axiosConfig';
 
 const PRODUCTS_PER_PAGE = 30;
 
 const HomeProductGrid = () => {
-  const [products, setProducts] = useState([]); 
+  const [products, setProducts] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  
+
   const {
     location = {},
     permissionGranted,
@@ -21,18 +22,24 @@ const HomeProductGrid = () => {
   } = UseGeoLocation(true);
 
   // 진단 코드 1: 렌더링이 발생할 때마다 현재 상태를 출력
-  console.log('--- 렌더링 시작 ---', { isPermissionLoading, permissionGranted });
+  console.log('--- 렌더링 시작 ---', {isPermissionLoading, permissionGranted});
 
   const fetchProducts = useCallback((pageNum) => {
     if (!location.lat || !location.lng) return;
 
     setIsLoading(true);
-    fetch(`/api/buyer/products/nearby?lat=${location.lat}&lng=${location.lng}&distance=3&page=${pageNum}&size=${PRODUCTS_PER_PAGE}`)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then(newProducts => {
+    // fetch 대신 axiosInstance 사용 (params 옵션으로 쿼리 스트링 관리)
+    axiosInstance.get('/api/buyer/products/nearby', {
+      params: {
+        lat: location.lat,
+        lng: location.lng,
+        distance: 3,
+        page: pageNum,
+        size: PRODUCTS_PER_PAGE
+      }
+    })
+      .then(response => {
+        const newProducts = response.data;
         setProducts(prev => pageNum === 0 ? newProducts : [...prev, ...newProducts]);
         setHasMore(newProducts.length === PRODUCTS_PER_PAGE);
       })
@@ -45,9 +52,9 @@ const HomeProductGrid = () => {
 
   useEffect(() => {
     if (permissionGranted && location.lat && location.lng) {
-        setPage(0);
-        setProducts([]);
-        fetchProducts(0);
+      setPage(0);
+      setProducts([]);
+      fetchProducts(0);
     }
   }, [permissionGranted, location.lat, location.lng, fetchProducts]);
 
@@ -81,7 +88,7 @@ const HomeProductGrid = () => {
       </section>
     );
   }
-  
+
   // 3. 권한을 요청해야 하는 경우 (permissionGranted === null)
   if (permissionGranted === null) {
     console.log('[UI] "권한 필요" 화면 표시 (버튼)');
@@ -89,9 +96,9 @@ const HomeProductGrid = () => {
       <section className={ProductStyles["location-section"]}>
         <div className={ProductStyles["location-denied-message"]}>
           <p>주변 상품을 보려면 위치 정보 접근이 필요합니다.</p>
-          <button 
+          <button
             className={ProductStyles["enable-location-button"]}
-            onClick={requestLocation} 
+            onClick={requestLocation}
             disabled={isLocationLoading}
           >
             {isLocationLoading ? '위치 정보 확인 중...' : '위치 정보 접근 허용하기'}
@@ -100,7 +107,7 @@ const HomeProductGrid = () => {
       </section>
     );
   }
-  
+
   // 4. 모든 확인을 통과한 경우 (permissionGranted === true)
   // 진단 코드 4: 어떤 UI가 그려지는지 확인
   console.log('[UI] 정상 상품 목록 표시');
@@ -109,10 +116,10 @@ const HomeProductGrid = () => {
       <h2 className={ProductStyles["section-title"]}>내 주변 상품</h2>
       <div className={ProductStyles["product-grid"]}>
         {products.map((product) => (
-          <HomeProductItem key={product.productId} product={product} />
+          <HomeProductItem key={product.productId} product={product}/>
         ))}
       </div>
-      
+
       {initialLoadComplete && !isLoading && products.length === 0 && (
         <div className={ProductStyles["no-products-message"]}>
           <p>주변에 등록된 상품이 없거나, 운영중인 상점이 없습니다.</p>

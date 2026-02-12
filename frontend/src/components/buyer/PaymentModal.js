@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import ModalStyles from '../../styles/buyer/PaymentModal.module.css';
-import axiosConfig from '../../services/axiosConfig';
+import axiosInstance from '../../services/axiosConfig';
 
 const PaymentModal = ({isOpen, onClose, product, quantity}) => {
   const navigate = useNavigate();
@@ -17,19 +17,21 @@ const PaymentModal = ({isOpen, onClose, product, quantity}) => {
     return null;
   }
 
-  const handleOnSitePayment = () => {
-    axiosConfig.post(`/api/buyer/pay/on-site?productId=${product.productId}&quantity=${quantity}`)
-      .then(response => {
-        // axios 성공 시 바로 데이터 처리
-        alert('현장결제 예약이 완료되었습니다!');
-        navigate(`/buyer/order-complete?orderId=${response.data.orderId}`);
-      })
-      .catch(error => {
-        console.error('On-site Payment Error:', error);
-        // 에러 메시지 처리 (백엔드 응답 구조에 따라 다를 수 있음)
-        alert('결제에 실패했습니다.');
-        onClose();
-      });
+// 1. 현장 결제 (AxiosInstance 사용)
+  const handleOnSitePayment = async () => {
+    try {
+      // 기존 로직 유지하되, async/await 패턴으로 깔끔하게 변경
+      const response = await axiosInstance.post(`/api/buyer/pay/on-site?productId=${product.productId}&quantity=${quantity}`);
+
+      alert('현장결제 예약이 완료되었습니다!');
+      // axios는 .data 안에 결과가 있습니다.
+      navigate(`/buyer/order-complete?orderId=${response.data.orderId}`);
+    } catch (error) {
+      console.error('On-site Payment Error:', error);
+      const errorMsg = error.response?.data?.message || '결제에 실패했습니다.';
+      alert(errorMsg);
+      onClose();
+    }
   };
 
   const handleCardPayment = (isReservation) => {
@@ -47,7 +49,9 @@ const PaymentModal = ({isOpen, onClose, product, quantity}) => {
       sessionKey: sessionKey,
       orderId: orderId,
     };
-    sessionStorage.setItem(sessionKey, JSON.stringify(paymentInfo));
+    // 🔴 [수정 핵심] sessionStorage -> localStorage로 변경!
+    // (팝업에서 localStorage를 읽으므로 여기도 localStorage에 저장해야 함)
+    localStorage.setItem(sessionKey, JSON.stringify(paymentInfo));
 
     const params = new URLSearchParams({
       amount: finalAmount,
@@ -55,9 +59,9 @@ const PaymentModal = ({isOpen, onClose, product, quantity}) => {
       sessionKey: sessionKey,
       orderId: orderId,
     }).toString();
-
+    // 팝업 열기
     const popup = window.open(`/toss-checkout?${params}`, 'toss-payment', 'width=800,height=600');
-
+    // 결과 감시
     const interval = setInterval(() => {
       if (popup && popup.closed) {
         clearInterval(interval);

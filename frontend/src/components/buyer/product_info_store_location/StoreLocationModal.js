@@ -16,7 +16,7 @@ const StoreLocationModal = ({ isOpen, onClose, storeId, storeName, storeAddress 
             setError(null);
             setLocation(null);
 
-            axiosConfig().get(`/api/buyer/maps/${storeId}`)
+            axiosConfig.get(`/api/buyer/maps/${storeId}`)
                 .then(response => {
                     setLocation(response.data);
                 })

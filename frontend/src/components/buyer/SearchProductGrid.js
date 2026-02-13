@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, {useState, useEffect, useCallback} from 'react';
+import {useSearchParams} from 'react-router-dom';
 import SearchProductItem from './SearchProductItem';
 import ProductStyles from '../../styles/buyer/Product.module.css';
 import UseGeoLocation from './UseGeoLocation';
+import api from '../../services/axiosConfig';
 
 const PRODUCTS_PER_PAGE = 30;
 
@@ -30,13 +31,33 @@ const SearchProductGrid = () => {
     setIsLoading(true);
     const apiUrl = `/api/buyer/products/search?lat=${location.lat}&lng=${location.lng}&distance=3&search=${query}&page=${pageNum}&size=${PRODUCTS_PER_PAGE}`;
 
-    fetch(apiUrl)
-      .then(res => res.json())
-      .then(newProducts => {
-        setProducts(prev => pageNum === 0 ? newProducts : [...prev, ...newProducts]);
+    // 쿼리 파라미터를 axios의 params 옵션으로 넣으면 인코딩 문제도 해결되고 훨씬 깔끔합니다.
+    api.get('/api/buyer/products/search', {
+      params: {
+        lat: location.lat,
+        lng: location.lng,
+        distance: 3,
+        search: query,
+        page: pageNum,
+        size: PRODUCTS_PER_PAGE
+      }
+    })
+      .then(response => {
+        const newProducts = response.data; // axios는 .json() 변환 필요 없음 (.data에 바로 있음)
+
+        // 기존 로직 유지
+        if (pageNum === 0) {
+          setProducts(newProducts);
+        } else {
+          setProducts(prev => [...prev, ...newProducts]);
+        }
         setHasMore(newProducts.length === PRODUCTS_PER_PAGE);
       })
-      .catch(error => console.error("Error fetching search products:", error))
+      .catch(error => {
+        console.error("Error fetching search products:", error);
+        // 에러 시 빈 배열 처리 등의 안전 장치 (선택 사항)
+        if (pageNum === 0) setProducts([]);
+      })
       .finally(() => {
         setIsLoading(false);
         if (pageNum === 0) {
@@ -92,7 +113,7 @@ const SearchProductGrid = () => {
       </section>
     );
   }
-  
+
   // 3. 권한을 요청해야 하는 경우 (permissionGranted === null)
   if (permissionGranted === null) {
     console.log('[UI] "권한 필요" 화면 표시 (버튼)');
@@ -100,9 +121,9 @@ const SearchProductGrid = () => {
       <section className={ProductStyles["location-section"]}>
         <div className={ProductStyles["location-denied-message"]}>
           <p>주변 상품을 보려면 위치 정보 접근이 필요합니다.</p>
-          <button 
+          <button
             className={ProductStyles["enable-location-button"]}
-            onClick={requestLocation} 
+            onClick={requestLocation}
             disabled={isLocationLoading}
           >
             {isLocationLoading ? '위치 정보 확인 중...' : '위치 정보 접근 허용하기'}
@@ -111,25 +132,25 @@ const SearchProductGrid = () => {
       </section>
     );
   }
-  
+
   // 4. 모든 확인을 통과한 경우 (permissionGranted === true)
   return (
     <section className={ProductStyles["product-section"]}>
       <h2 className={ProductStyles["section-title"]}>'{query}' 검색 결과</h2>
       <div className={ProductStyles["product-grid"]}>
         {products.map((product) => (
-          <SearchProductItem key={product.productId} product={product} />
+          <SearchProductItem key={product.productId} product={product}/>
         ))}
       </div>
 
       {initialLoadComplete && !isLoading && products.length === 0 && (
         <div className={ProductStyles["no-products-message"]}>
-            <p>'{query}'에 대한 검색 결과가 없습니다.</p>
+          <p>'{query}'에 대한 검색 결과가 없습니다.</p>
         </div>
       )}
 
       {isLoading && <div className={ProductStyles["loading"]}></div>}
-      
+
       {hasMore && !isLoading && products.length > 0 && (
         <div className={ProductStyles["more-button-container"]}>
           <button

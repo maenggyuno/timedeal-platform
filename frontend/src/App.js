@@ -11,7 +11,7 @@ import SellerLoginRedirect from './components/SellerLoginRedirect';
 import HomePage from './pages/HomePage';
 import OAuth2RedirectHandler from './components/OAuth2RedirectHandler';
 import AuthCallback from './components/AuthCallback';
-
+import MaintenanceGuard from './components/MaintenanceGuard';
 // 구매자 사이트
 import MainPage from './pages/buyer/MainPage';
 import CaterorySearchPage from './pages/buyer/CaterorySearchPage';
@@ -50,6 +50,7 @@ function AppContent() {
 
     return (
         <Router>
+          <MaintenanceGuard>
             <Routes>
                 {/* 공통 부분 */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
@@ -92,6 +93,7 @@ function AppContent() {
                     </Route>
                 </Route>
             </Routes>
+          </MaintenanceGuard>
         </Router>
     );
 }

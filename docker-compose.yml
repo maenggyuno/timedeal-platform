@@ -10,6 +10,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      - TZ=Asia/Seoul  # 👈 한국 시간대 설정 추가
       # [DB 연결]
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}

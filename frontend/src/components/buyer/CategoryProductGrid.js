@@ -35,7 +35,7 @@ const CategoryProductGrid = () => {
       params: {
         lat: location.lat,
         lng: location.lng,
-        distance: 3,
+        distance: 15,
         category: category,
         page: pageNum,
         size: PRODUCTS_PER_PAGE

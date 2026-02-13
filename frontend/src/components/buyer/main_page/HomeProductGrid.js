@@ -33,7 +33,7 @@ const HomeProductGrid = () => {
       params: {
         lat: location.lat,
         lng: location.lng,
-        distance: 3,
+        distance: 15,
         page: pageNum,
         size: PRODUCTS_PER_PAGE
       }

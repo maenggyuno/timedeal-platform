@@ -39,7 +39,7 @@ public class BuyerMapService {
     // 근처 상점 검색
     public List<BuyerStoreMapResponse> getNearbyStores(double latitude, double longitude) {
         // 1. DB에서 조회
-        double distance = 5.0;
+        double distance = 15.0;
         List<Store> stores = mapRepository.findNearbyStores(latitude, longitude, distance);
 
         // 2. List로 받은 걸 DTO 리스트로 변환

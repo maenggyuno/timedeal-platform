@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, {useState, useEffect} from 'react';
+import api from '../../services/axiosConfig';
 import styles from '../../styles/buyer/ReviewModal.module.css';
 
-const ReviewModal = ({ isOpen, onClose, mode, orderId, reviewData }) => {
+const ReviewModal = ({isOpen, onClose, mode, orderId, reviewData}) => {
   const [rating, setRating] = useState(5);
   const [content, setContent] = useState('');
   const [error, setError] = useState(null);
@@ -23,10 +23,12 @@ const ReviewModal = ({ isOpen, onClose, mode, orderId, reviewData }) => {
       return;
     }
     try {
-      await axios.post(`/api/buyer/review/${orderId}`, 
-        { rating, content },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
-      );
+      // ✅ 변경점: axios -> api 로 변경
+      // ✅ 변경점: headers 설정 삭제 (axiosConfig가 자동으로 토큰을 넣어줌)
+      await api.post(`/api/buyer/review/${orderId}`, {
+        rating,
+        content
+      });
       onClose(true);
     } catch (err) {
       setError('리뷰 등록에 실패했습니다. 다시 시도해주세요.');

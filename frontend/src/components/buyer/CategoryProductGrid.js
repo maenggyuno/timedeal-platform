@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, {useState, useEffect, useCallback} from 'react';
+import {useSearchParams} from 'react-router-dom';
 import CategoryProductItem from './CategoryProductItem';
 import ProductStyles from '../../styles/buyer/Product.module.css';
 import UseGeoLocation from './UseGeoLocation';
+import api from '../../services/axiosConfig';
 
 const PRODUCTS_PER_PAGE = 30;
 
@@ -28,15 +29,28 @@ const CategoryProductGrid = () => {
     if (!location.lat || !location.lng || !category) return;
 
     setIsLoading(true);
-    const apiUrl = `/api/buyer/products/search/category?lat=${location.lat}&lng=${location.lng}&distance=3&category=${category}&page=${pageNum}&size=${PRODUCTS_PER_PAGE}`;
+    // ✅ 변경점: fetch -> api.get 사용
+    // ✅ 변경점: 쿼리 파라미터를 params 객체로 분리 (가독성 UP, 인코딩 자동 처리)
+    api.get('/api/buyer/products/search/category', {
+      params: {
+        lat: location.lat,
+        lng: location.lng,
+        distance: 3,
+        category: category,
+        page: pageNum,
+        size: PRODUCTS_PER_PAGE
+      }
+    })
+      .then(response => {
+        const newProducts = response.data; // axios는 .json() 필요 없음 (.data에 바로 있음)
 
-    fetch(apiUrl)
-      .then(res => res.json())
-      .then(newProducts => {
         setProducts(prev => pageNum === 0 ? newProducts : [...prev, ...newProducts]);
         setHasMore(newProducts.length === PRODUCTS_PER_PAGE);
       })
-      .catch(error => console.error("Error fetching category products:", error))
+      .catch(error => {
+        console.error("Error fetching category products:", error);
+        if (pageNum === 0) setProducts([]); // 에러 나면 빈 화면 처리
+      })
       .finally(() => {
         setIsLoading(false);
         if (pageNum === 0) {
@@ -56,7 +70,7 @@ const CategoryProductGrid = () => {
     if (permissionGranted && !location.lat) {
       requestLocation();
     }
-    
+
     if (location.lat && location.lng && category && page === 0 && !initialLoadComplete) {
       fetchProducts(0);
     }
@@ -92,7 +106,7 @@ const CategoryProductGrid = () => {
       </section>
     );
   }
-  
+
   // 3. 권한을 요청해야 하는 경우 (permissionGranted === null)
   if (permissionGranted === null) {
     console.log('[UI] "권한 필요" 화면 표시 (버튼)');
@@ -100,9 +114,9 @@ const CategoryProductGrid = () => {
       <section className={ProductStyles["location-section"]}>
         <div className={ProductStyles["location-denied-message"]}>
           <p>주변 상품을 보려면 위치 정보 접근이 필요합니다.</p>
-          <button 
+          <button
             className={ProductStyles["enable-location-button"]}
-            onClick={requestLocation} 
+            onClick={requestLocation}
             disabled={isLocationLoading}
           >
             {isLocationLoading ? '위치 정보 확인 중...' : '위치 정보 접근 허용하기'}
@@ -111,19 +125,19 @@ const CategoryProductGrid = () => {
       </section>
     );
   }
-  
+
   // 4. 모든 확인을 통과한 경우 (permissionGranted === true)
   return (
     <section className={ProductStyles["product-section"]}>
       <h2 className={ProductStyles["section-title"]}>{category} 카테고리 상품</h2>
       <div className={ProductStyles["product-grid"]}>
         {products.map((product) => (
-          <CategoryProductItem key={product.productId} product={product} />
+          <CategoryProductItem key={product.productId} product={product}/>
         ))}
       </div>
 
       {initialLoadComplete && !isLoading && products.length === 0 && (
-         <div className={ProductStyles["no-products-message"]}>
+        <div className={ProductStyles["no-products-message"]}>
           <p>{category} 카테고리에 해당하는 상품이 없습니다.</p>
         </div>
       )}

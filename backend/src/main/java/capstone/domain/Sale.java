@@ -47,5 +47,9 @@ public class Sale {
     // 0: 판매취소, 1: 현장결제 수령전, 2: 카드결제 수령전, 3: 카드결제 예약중, 4: 판매완료
     @Column(name = "status", nullable = false)
     private Integer status;
+
+    // ▼▼▼ [추가] 총 주문 금액 (단가 * 수량) ▼▼▼
+    @Column(name = "total_price")
+    private Long totalPrice;
 }
 

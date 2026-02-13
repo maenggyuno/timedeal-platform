@@ -456,6 +456,53 @@ free -h    # 메모리 (Swap 확인)
    docker logs [컨테이너_ID_또는_이름] | grep "Exception"
    ```
 
+## 🐳 도커 컨테이너 내부 DB 확인 방법 (MySQL)
+
+로컬 개발 환경에서 도커 컨테이너(`timedeal-local-db`)에 접속하여 테이블 생성 및 컬럼 변경 사항을 확인하는 방법입니다.
+
+### 1. MySQL 접속
+Docker Desktop의 **Containers > Exec** 탭(또는 터미널)에서 아래 명령어를 입력합니다.
+
+```bash
+# MySQL 접속 (root 계정)
+mysql -u root -p
+
+# Enter password: 문구가 나오면 설정한 비밀번호 입력
+# (보안상 입력 시 화면에는 아무것도 표시되지 않습니다. 입력 후 Enter를 누르세요.)
+```
+
+### 2. 데이터베이스 및 테이블 확인 (SQL)
+MySQL에 접속한 상태(`mysql>`)에서 아래 쿼리문을 순서대로 실행하여 구조를 확인합니다.
+
+```sql
+-- 1. 데이터베이스 목록 조회
+show databases;
+
+-- 2. 프로젝트 DB 선택 (본인의 DB명으로 변경, 예: timedeal_db)
+use [DB이름];
+
+-- 3. 전체 테이블 목록 조회
+-- (reviews, carts, follows 테이블이 생성되었는지 확인)
+show tables;
+
+-- 4. 주요 변경사항 상세 확인
+-- 4-1. order_items 테이블에 total_price 컬럼이 추가되었는지 확인
+desc order_items;
+
+-- 4-2. 신규 테이블(reviews) 구조 확인
+desc reviews;
+```
+
+### 💡 팁 (Tip)
+* `desc [테이블명];` 명령어를 사용하면 해당 테이블의 컬럼명(Field), 타입(Type), Null 여부, Key(PK/FK) 정보를 자세히 볼 수 있습니다.
+* 도커 컨테이너를 재시작 
+* ```bash
+  docker-compose -f docker-compose-local.yml up -d  
+  ```
+* 코드 변경 후 이미지 다시 굽고 시작 
+* ```bash
+   docker-compose -f docker-compose-local.yml up -d --build
+  ```
 ###  6. 트러블 슈팅 가이드 (Memo)
 배포 중 Timeout 발생 시: EC2 사양 문제일 수 있으므로 Swap Memory가 활성화되어 있는지 확인한다.
 
